@@ -9,6 +9,8 @@ body {
 	width: 100%;
 	height: 100%;
 	position: relative;
+	margin: 0;
+	overflow: hidden;
 }
 
 .container-1 {
@@ -54,6 +56,22 @@ body {
 .login-2 p {
 	font-size: 30px;
 	margin: 10px;
+}
+
+.login-2 button {
+	border: 5px solid;
+	padding: 12px;
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	border-radius: 5px;
+	background-color: white;
+	font-family: kaya-font;
+	font-size: 20px;
+}
+
+.login-2 button:active {
+	background-color: gray; 
 }
 
 .inputboxlogin {
