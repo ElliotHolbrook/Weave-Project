@@ -20,6 +20,10 @@ body {
 	text-align: center;
 }
 
+.highlight {
+	background-color: rgb(237, 255, 242);
+}
+
 .login-1 {
 	width: 384px;
 	min-height: 300px;
@@ -82,6 +86,30 @@ body {
 	padding: 0px 10px 0px 10px;
 }
 
-.highlight {
-	background-color: rgb(237, 255, 242);
+.inputboxlogin:active {
+	border: 0px solid transparent;
+}
+
+.map-button-box {
+	float: right;
+	margin: 8px;
+	border: 20px solid transparent;
+	border-image: url("kayakraft_box.png") 40% round;
+	background: white;
+}
+
+.map-button{
+	text-decoration: none;
+	font-size: 20px;
+}
+
+.map-button:active {
+	background: gray;
+	color: blue;
+}
+
+@media screen and (max-width: 720px) {
+    .map-button-box {
+        display: none !important;
+    }
 }
