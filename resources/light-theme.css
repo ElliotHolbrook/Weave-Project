@@ -1,0 +1,19 @@
+body {
+	background-color: rgb(237, 255, 242);
+}
+
+.highlight {
+	background-color: rgb(237, 255, 242);
+}
+
+.login-1 {
+	background-image: url("KayaKraft Logo  blank - light-mode.png");
+}
+
+.login-2 {
+	border-image: url("kayakraft_box - light-mode.png") 41% round;
+}
+
+.map-button-box {
+	border-image: url("kayakraft_box - light-mode.png") 40% round;
+}

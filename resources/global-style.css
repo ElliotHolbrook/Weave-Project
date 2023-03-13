@@ -4,7 +4,6 @@
 }
 
 body {
-	background-color: rgb(237, 255, 242);
 	font-family: kaya-font;
 	width: 100%;
 	height: 100%;
@@ -20,10 +19,6 @@ body {
 	text-align: center;
 }
 
-.highlight {
-	background-color: rgb(237, 255, 242);
-}
-
 .login-1 {
 	width: 384px;
 	min-height: 300px;
@@ -34,7 +29,6 @@ body {
 	justify-content: center;
 	display: flex;
 	font-size: 40px;
-	background-image: url("KayaKraft Logo  blank - Trimmed.png");
 	background-position: 51% 0%;
 }
 
@@ -47,13 +41,12 @@ body {
 	height: 210px;
 	top: 50%;
 	left: 50%;
-	transform:translate(-50%, -75px);
+	transform: translate(-50%, -75px);
 	align-items: center;
 	justify-content: center;
 	display: flex;
 	font-size: 40px;
 	border: 70px solid transparent;
-	border-image: url("kayakraft_box.png") 40% round;
 	background-color: white;
 }
 
@@ -94,7 +87,6 @@ body {
 	float: right;
 	margin: 8px;
 	border: 20px solid transparent;
-	border-image: url("kayakraft_box.png") 40% round;
 	background: white;
 }
 
@@ -104,7 +96,7 @@ body {
 }
 
 .map-button:active {
-	background: gray;
+	background-color: gray;
 	color: blue;
 }
 
@@ -112,4 +104,82 @@ body {
     .map-button-box {
         display: none !important;
     }
+}
+
+.popupHaze {
+	z-index: 98;
+	width: 100vw;
+	height: 100vh;
+	background-color: gray;
+	opacity: 0.8;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.beta-popup {
+	z-index: 99 !important;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	border: 20px solid transparent;
+	transform: translate(-50%, -50%);
+	background-color: white;
+	color: red;
+	font-family: arial;
+}
+
+.theme-switch {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+	z-index: 1;
+	margin: 10px;
+	border: 5px solid;
+}
+
+.theme-switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}  
+
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: white;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+
+.slider:before {
+	position: absolute;
+	content: "";
+	height: 26px;
+	width: 26px;
+	left: 4px;
+	bottom: 4px;
+	background-color: black;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+
+.theme-check:checked + .slider {
+	background-color: #2196F3;
+}
+
+.theme-check:focus + .slider {
+	box-shadow: 0 0 1px #2196F3;
+}
+
+.theme-check:checked + .slider:before {
+	-webkit-transform: translateX(26px);
+	-ms-transform: translateX(26px);
+	transform: translateX(26px);
 }
