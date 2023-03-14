@@ -37,7 +37,11 @@
 		<?php require_once 'betawarning.php';?>
 		
 		<script>
+			var defaultTheme = "light";
 			var currentTheme = getCookie("theme");
+			if (currentTheme == "") {
+				currentTheme = defaultTheme;
+			}
 			document.getElementById("theme").href = "resources/" + currentTheme + "-theme.css";
 			
 			function switchTheme() {
