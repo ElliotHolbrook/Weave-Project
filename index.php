@@ -29,30 +29,35 @@
 		
 		<form name="themeForm">
 		<label class="theme-switch">
-			<input type="checkbox" name="switch" class="theme-check">
+			<input type="checkbox" name="switch" class="theme-check" id="theme-check">
 			<span class="slider" onclick="switchTheme()"></span>
 		</label>
+		<h2 style="margin: 10px; position: relative">Dark Mode</h2>
 		</form>
 		
-		<?php require_once 'betawarning.php';?>
-		
-		<script>
+		<script name="themes">
+			//Theme setup
 			var defaultTheme = "light";
 			var currentTheme = getCookie("theme");
 			if (currentTheme == "") {
 				currentTheme = defaultTheme;
 			}
+			if (currentTheme == "dark") {
+				document.getElementById("theme-check").checked = true;
+			} else {
+				document.getElementById("theme-check").checked = false;
+			}
 			document.getElementById("theme").href = "resources/" + currentTheme + "-theme.css";
 			
 			function switchTheme() {
-				if (currentTheme == "light") {
-					currentTheme = "dark";
-					document.getElementById("theme").href = "resources/dark-theme.css";
-					document.cookie = "theme=dark"
-				} else {
+				if (document.getElementById("theme-check").checked) {
 					currentTheme = "light";
 					document.getElementById("theme").href = "resources/light-theme.css";
 					document.cookie = "theme=light"
+				} else {
+					currentTheme = "dark";
+					document.getElementById("theme").href = "resources/dark-theme.css";
+					document.cookie = "theme=dark"
 				}			
 			}
 			
@@ -71,5 +76,12 @@
 				return "";
 			}
 		</script>
+		
+		
+		<script name="input validation">
+			//Inputs are also validated on the server side so don't bother messing with these.
+				
+		</script>
+		<?php require_once 'betawarning.php';?>
 	</body>
 </html>
