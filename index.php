@@ -37,6 +37,7 @@
 		<?php require_once 'betawarning.php';?>
 		
 		<script>
+			
 			var defaultTheme = "light";
 			var currentTheme = getCookie("theme");
 			if (currentTheme == "") {
