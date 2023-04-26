@@ -6,7 +6,7 @@
 		
 		<title>Log In</title>
 	</head>
-	<body>
+	<body onload="pageLoad()">
 		
 		<div class="map-button-box">
 		<a href="http://kayakraft.net:8069/server/KayaKraft" class="map-button" style="padding-right: 10px;" target="_blank" rel="noopener noreferrer">Stats</a>
@@ -17,11 +17,11 @@
 		
 		<div class="login-1 container-1"><h1>Log In</h1></div>
 		<div class="login-2 container-1">
-			<form action="loginValidation.php" method="post">
+			<form action="CRUD/loginRequestHandler.php" method="get">
 				<label for="email" style="float: left; padding-top: 55px;">Email:</label>
-				<input class="inputboxlogin highlight" type="email" name="email"></input>
+				<input class="inputboxlogin highlight" type="email" id="email" name="email"></input>
 				<label for="email" style="float: left">Password:</label>
-				<input class="inputboxlogin highlight" type="password" name="email"></input>
+				<input class="inputboxlogin highlight" type="password" id="password" name="password"></input>
 				<center><button type="submit" style="height: 20px; margin-top: 20px">Submit</button></center>
 				<p>or <a href="register.html">register here</a></p>
 			</form>
@@ -35,46 +35,10 @@
 		<h2 style="margin: 10px; position: relative">Dark Mode</h2>
 		</form>
 		
-		<script name="themes">
-			//Theme setup
-			var defaultTheme = "light";
-			var currentTheme = getCookie("theme");
-			if (currentTheme == "") {
-				currentTheme = defaultTheme;
-			}
-			if (currentTheme == "dark") {
-				document.getElementById("theme-check").checked = true;
-			} else {
-				document.getElementById("theme-check").checked = false;
-			}
-			document.getElementById("theme").href = "resources/" + currentTheme + "-theme.css";
+		
+		
+		<script src="themes.js" name="themes" defer>
 			
-			function switchTheme() {
-				if (document.getElementById("theme-check").checked) {
-					currentTheme = "light";
-					document.getElementById("theme").href = "resources/light-theme.css";
-					document.cookie = "theme=light"
-				} else {
-					currentTheme = "dark";
-					document.getElementById("theme").href = "resources/dark-theme.css";
-					document.cookie = "theme=dark"
-				}			
-			}
-			
-			function getCookie(cname) {
-				let name = cname + "=";
-				let ca = document.cookie.split(';');
-				for(let i = 0; i < ca.length; i++) {
-					let c = ca[i];
-					while (c.charAt(0) == ' ') {
-						c = c.substring(1);
-					}
-					if (c.indexOf(name) == 0) {
-						return c.substring(name.length, c.length);
-					}
-				}
-				return "";
-			}
 		</script>
 		
 		
