@@ -7,18 +7,22 @@
 	$password = $_GET["password"];
 	
 	//prepare SQL statement
-	$sql = "SELECT passHashed FROM account_data WHERE email='{$email}'";
+	$sql = "SELECT * FROM account_data WHERE email='{$email}'";
 	//prepare operation and point at db
 	$stmt = $db->prepare($sql);
 	//execute operation
 	$stmt->execute();
 	//fetch data from database
-	$passHashed = $stmt->fetch();
+	$userData = $stmt->fetch();
 	
 	
 	//verify user password against hashed database password
-	if (password_verify($password, $passHashed["passHashed"])) {
-		echo "Password Correct";
+	if (password_verify($password, $userData["passHashed"])) {
+		//sends uses to home page
+		echo "Success";
+		header("Location: ../home");
 	} else {
-		echo "Password Not Correct";
+		//sends user back to the log in page
+		echo "Failure";
+		header("Location:  ../login");
 	}

@@ -4,11 +4,11 @@ var currentTheme
 
 //Theme setup
 function pageLoad() {
-	themePrep()
-	alert("pageLoad ran")
+	alert("pageLoad ran");
+	themePrep();
 }
 
-//function themePrep() {	
+function themePrep() {	
 	var defaultTheme = "light";					//default theme
 	var currentTheme = getCookie("theme");		//gets saved cookie theme
 	if (currentTheme == "") {
@@ -21,7 +21,7 @@ function pageLoad() {
 	}
 	document.getElementById("theme").href = "resources/" + currentTheme + "-theme.css";
 	alert("themePrep ran")
-//}
+}
 
 function switchTheme() {
 	if (document.getElementById("theme-check").checked) {
@@ -50,3 +50,5 @@ function getCookie(cname) {
 	}
 	return "";
 }
+
+pageLoad();
