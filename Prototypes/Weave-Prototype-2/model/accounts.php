@@ -1,14 +1,111 @@
 <?php
     require_once "dbInteract.php";
 
-    //Account class is used for registering new accounts
-    class Account {
-        private $email;
-        private $passHashed;
-        private $username;
-        private $id;
+    //AccountInteractions will store the procedures and functions that involve communicating with the database to be used when do any kind of account management
+    class AccountInteractions {
+        //Used to get the hashed version of the password that is stored in the database
+        public static function getPassHashedByEmail($email) {
+            $data = DBConnection::read("SELECT passHashed FROM account_data WHERE email = :email", [$email], [":email"]);
+            return $data[0];
+        }
 
-        private function __construct(email: $email, id: $id, ) {
-            echo "hjonk";
+        public static function getUsernameByEmail($email) {
+            $data = DBConnection::read("SELECT username FROM account_data WHERE email = :email", [$email], [":email"]);
+            return $data[0];
+        }
+
+        public static function addAccountToDatabase($account) {
+            DBConnection::create("INSERT INTO account_data (username, email, passHashed, pin) VALUES (:username, :email, :passHashed, :pin)", [$account->getUsername(), $account->getEmail(), $account->getPassword(), $account->getPin()], [":username", ":email", ":passHashed", ":pin"]);
+        }
+    }
+
+    //account interactions is a class for functions that don't don't interract with the database but are required for validating inputted data and
+    //preparing data for the database.
+    class AccountFunctions {
+        public static function validatePassword($username) {
+            //length check
+            if ((strlen($username) < 7)) {          //check to make sure it is more than 6 characters long
+                return false;
+            }
+            
+            //upper case check
+            if (!preg_match("/[ABCDEFGHIJKLMNOPQRSTUVWXYZ]/", $username)) {     //check to make sure it has upper case letters
+                return false;
+            }
+
+            //lower case check
+            if (!preg_match("/[abcdefghijklmnopqrstuvwxyz]/", $username)) {     //check to make sure it has lower case letters
+                return false;
+            }
+
+            //symbol check
+            if (!preg_match("/[£$%&*()}{@#~?>\'^<>,|=_+¬-]/", $username)) {     //check to make sure it has a symbol
+                return false;
+            }
+            return true;
+        }
+
+        public static function validatePin($pin) {
+            if (!is_numeric($pin)) {        //confirm that it is a number
+                return false;
+            } elseif (str_contains($pin, "e")) {    //confirm that there is no e or E
+                return false;
+            } elseif (str_contains($pin, "E")){
+                return false;
+            } elseif (strlen($pin) != 6) {      //confirm that it is the right length
+                return false;
+            }
+            return true;
+        }
+
+        public static function hashPassword($password) {
+            $passHashed = password_hash($password, PASSWORD_DEFAULT);
+            return $passHashed;
+        }
+    }
+
+    class Account {
+        private $username;
+        private $email;
+        private $password;
+        private $pin;
+
+        public function __construct($username, $email, $password, $pin) {
+            $this->setUsername($username);
+            $this->setEmail($email);
+            $this->setPassword($password);
+            $this->setPin($pin);
+        }
+
+        private function setUsername($username) {
+            $this->username = $username;
+        }
+
+        private function setEmail($email) {
+            $this->email = $email;
+        }
+
+        private function setPassword($password) {
+            $this->password = AccountFunctions::hashPassword($password);
+        }
+
+        private function setPin($pin) {
+            $this->pin = $pin;
+        }
+
+        public function getUsername() {
+            return $this->username;
+        }
+
+        public function getEmail() {
+            return $this->email;
+        }
+
+        public function getPassword() {
+            return $this->password;
+        }
+
+        public function getPin() {
+            return $this->pin;
         }
     }

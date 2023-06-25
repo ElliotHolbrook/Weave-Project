@@ -41,6 +41,7 @@
                 $stmt->bindParam($parameter_aliases[$i], $bound_parameters[$i]);
             }
             $stmt->execute();
+            unset($db);
         }
 
         //This method will take care of all the other annoying parts of getting data from the database. For example, now we can use 
@@ -54,6 +55,7 @@
             $stmt->execute();
             //unlike the other CRUD operations, this has to return the data that it gets
             $data = $stmt->fetch();
+            unset($db);
             return $data;
         }
 
@@ -72,6 +74,7 @@
             if (str_contains($sql, "WHERE")) {
                 $stmt->execute();
             }
+            unset($db);
         }
 
         //There shouldn't be any bound parameters for this as the user should only be deleting items from a list of options like messages or blocked users
@@ -83,28 +86,8 @@
             if (str_contains($sql, "WHERE")) {
                 $stmt->execute();
             }
+            unset($db);
         }
     }
 
-    
-    
-    
-    
-    
-    //AccountInteractions will store the procedures and functions that involve communicating with the database to be used when do any kind of account management
-    class AccountInteractions {
-
-        //Used to get the hashed version of the password that is stored in the database
-        public static function getPassHashedByEmail($email) {
-            $data = DBConnection::read("SELECT passHashed FROM account_data WHERE email = :email", [$email], [":email"]);
-            return $data[0];
-        }
-
-        public static function getUsernameByEmail($email) {
-            $data = DBConnection::read("SELECT username FROM account_data WHERE email = :email", [$email], [":email"]);
-            return $data[0];
-        }
-    }
-
-    //echo AccountInteractions::getPassHashedByEmail("email@mail.com");
     

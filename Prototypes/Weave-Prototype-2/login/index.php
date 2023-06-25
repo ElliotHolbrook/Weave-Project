@@ -14,7 +14,7 @@
         </head>
         <body>
             <h1>Log In</h1><br>
-            <form id="logInForm" action="../controller/loginAttempt.php" method="post">
+            <form id="login-form" action="../controller/loginAttempt.php" method="post">
                 <label for="email">Email:</label>
                 <input type="text" name="email" style="
 
@@ -43,12 +43,11 @@
                 ?>
                 
                 " id="password" required></input><br>
-                <!--<button onclick="logInAttempt()">Submit</button>-->
                 <input type="submit">
             </form>
-        </body>
 
-        <!--<script src="javascript/logInScript.js"></script>-->
+            No acount? Register <a href="register.php">here</a><br>
+        </body>
     </html>
 
-<?php echo "Currently using PHP version: " . phpversion()?>
+<?php echo "<br>Currently using PHP version: " . phpversion()?>
