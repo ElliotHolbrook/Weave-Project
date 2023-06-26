@@ -7,7 +7,11 @@
     $password = $_POST["password"];
     $passwordRepeat = $_POST["password-repeat"];
     $pin = $_POST["pin"];
+    
+    //generate the ID for the account
+    $id = AccountFunctions::generateId();
 
+    //Validation
     if (strlen($username) < 4) {
         header("Location:  ../login/register.php?error=invalid-username");     //make sure the username is a valid length
         exit();
@@ -27,7 +31,7 @@
     //add backslashes to username before disruptive characters so that it displays properly
     addslashes($username);
 
-    $account = new Account($username, $email, $password, $pin);
+    $account = new Account($username, $email, $password, $pin, $id);
     AccountInteractions::addAccountToDatabase($account);
 
 

@@ -15,7 +15,16 @@
         }
 
         public static function addAccountToDatabase($account) {
-            DBConnection::create("INSERT INTO account_data (username, email, passHashed, pin) VALUES (:username, :email, :passHashed, :pin)", [$account->getUsername(), $account->getEmail(), $account->getPassword(), $account->getPin()], [":username", ":email", ":passHashed", ":pin"]);
+            DBConnection::create("INSERT INTO account_data (username, email, passHashed, pin, id) VALUES (:username, :email, :passHashed, :pin, :id)", [$account->getUsername(), $account->getEmail(), $account->getPassword(), $account->getPin(), $account->getId()], [":username", ":email", ":passHashed", ":pin", ":id"]);
+        }
+
+        public static function checkForId($id) {
+            $data = DBConnection::read("SELECT id FROM account_data WHERE id = " . $id); //get any matching IDs from database
+            if (($data) == False) {     //check if there are any matching IDs
+                return False;
+            } else {
+                return True;
+            }
         }
     }
 
@@ -59,8 +68,17 @@
         }
 
         public static function hashPassword($password) {
-            $passHashed = password_hash($password, PASSWORD_DEFAULT);
+            $passHashed = password_hash($password, PASSWORD_DEFAULT);   //use php password hashing function
             return $passHashed;
+        }
+
+        public static function generateId() {
+            do {
+                $strId = strval(rand(0, PHP_INT_MAX));              //generate random numbers until the number is not in use
+            } while (AccountInteractions::checkForId($strId));
+
+            $strId = str_pad($strId, 19, "0", STR_PAD_LEFT);                 //pad to 19 digits long
+            return $strId;
         }
     }
 
@@ -69,12 +87,14 @@
         private $email;
         private $password;
         private $pin;
+        private $id;
 
-        public function __construct($username, $email, $password, $pin) {
+        public function __construct($username, $email, $password, $pin, $id) {
             $this->setUsername($username);
             $this->setEmail($email);
             $this->setPassword($password);
             $this->setPin($pin);
+            $this->setId($id);
         }
 
         private function setUsername($username) {
@@ -93,6 +113,10 @@
             $this->pin = $pin;
         }
 
+        private function setId($id) {
+            $this->id = $id;
+        }
+
         public function getUsername() {
             return $this->username;
         }
@@ -107,5 +131,9 @@
 
         public function getPin() {
             return $this->pin;
+        }
+
+        public function getId() {
+            return $this->id;
         }
     }

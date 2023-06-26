@@ -18,8 +18,20 @@
                 <label for="password">Password: </label><input name="password" type="password" minlength="6" required></input><br>
                 <label for="password-repeat">Password Repeat: </label><input name="password-repeat" type="password" required></input><br>
                 <label for="pin">Pin: </label><input name="pin" type="number" step="1" minlength="4" maxlength="4" required></input><br>
+                <!-- <button class="g-recaptcha" 
+                     data-sitekey="6Lf7WM8mAAAAAHDK6zooulC0JWAynvaaFveorRQE" 
+                     data-callback='onSubmit' 
+                     data-action='submit'>Submit</button> -->
                 <button type="submit">Register</button>
             </form>
             <br><br>Already have an account? Click <a href="index.php">here</a>
+
+            <!--
+            <script src="https://www.google.com/recaptcha/api.js"></script>
+            <script>
+                function onSubmit(token) {
+                  document.getElementById("registration-form").submit();
+                 }
+            </script> -->
         </body>
     </html>
