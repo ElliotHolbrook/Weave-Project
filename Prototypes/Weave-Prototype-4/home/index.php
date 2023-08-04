@@ -1,6 +1,7 @@
 <?php
+    require_once "../libraries/accounts.php";
     session_start();
-    if (!isset($_SESSION["username"])) {
+    if (!isset($_SESSION["account"])) {
         header("Location: ../login");
     }
 ?>
@@ -14,7 +15,7 @@
     </form>
     <br>
     
-    Username: <?php    echo $_SESSION["username"]; ?><br>
+    Username: <?php    echo $_SESSION["account"]->getUsername(); ?><br>
 
     <a href="../friends/friend-manager.php">Manage Friends</a><br><br>
     

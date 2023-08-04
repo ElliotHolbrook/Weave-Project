@@ -1,7 +1,7 @@
 <?php  
-    require_once "../model/accounts.php";
+    require_once "../libraries/accounts.php";
 
-    //get values and set em
+    //get all the values that will be required
     $username = $_POST["username"];
     $email = $_POST["email"];
     $password = $_POST["password"];
@@ -10,6 +10,7 @@
     
     //generate the ID for the account
     $id = AccountFunctions::generateId();
+    $tag = AccountFunctions::generateTagForUsername($username);
 
     if (!AccountFunctions::validatePassword($password)) {
         header("Location:  ../login/register.php?error=invalid-password&username=$username&email=$email&pin=$pin");      //making sure that password fits within the security constraints
@@ -21,8 +22,11 @@
         header("Location:  ../login/register.php?error=invalid-password-repeat&username=$username&email=$email&pin=$pin");   //make sure the password and password repeat are the same
         exit();
     }
+    if (AccountInteractions::checkForEmail($email)) {       //make sure the email has not been used before
+        header("Location:  ../login/register.php?error=invalid-email&username=$username&pin=$pin");
+    }
     
-    $account = new Account($username, $email, $passHash, $pin, $id);
+    $account = new Account(username: $username, email: $email, passHashed: $passHash, pin: $pin, id: $id);
     
     if (!$account->getUsernameSetResult()) {
         header("Location:  ../login/register.php?error=invalid-username&email=$email&pin=$pin");     //make sure the username is valid
@@ -47,7 +51,9 @@
 
     $_SESSION["email"] = $email;
     $_SESSION["username"] = $username;
+    $_SESSION["tag"] = $account->getTag();
     $_SESSION["pin"] = $pin;
     $_SESSION["id"] = $id;
+    $_SESSION["account"] = $account;
     
     header("Location: ../home");

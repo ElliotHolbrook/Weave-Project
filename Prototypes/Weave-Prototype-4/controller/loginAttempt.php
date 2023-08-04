@@ -1,6 +1,7 @@
 <?php   
+    require_once "../libraries/accounts.php";
     session_start();
-    require_once "../model/accounts.php";
+    
     
     //get inputs from user
     $email = $_POST["email"];
@@ -21,8 +22,10 @@
       $account = AccountInteractions::getAccountByEmail($email);
       $_SESSION["email"] = $email;
       $_SESSION["username"] = $account->getUsername();
+      $_SESSION["tag"] = $account->getTag();
       $_SESSION["pin"] = $account->getPin();
       $_SESSION["id"] = $account->getId();
+      $_SESSION["account"] = $account;
 		  header("Location: ../home");
 	  } else {
 		//sends user back to the log in page

@@ -1,5 +1,5 @@
 <?php
-    require_once "dbInteract.php";
+    require_once "../model/dbInteract.php";
 
     //AccountInteractions will store the procedures and functions that involve communicating with the database to be used when do any kind of account management
     class AccountInteractions {
@@ -14,8 +14,21 @@
             return $data[0];
         }
 
+        public static function getIdByUsernameTag($username, $tag) {
+            $data = DBConnection::read("SELECT id FROM account_data WHERE username = :username AND tag = :tag", [$username, $tag], ["username", "tag"]);
+            return $data["id"];
+        }
+
         public static function checkForEmail($email) {
-            $data = DBConnection::read("SELECT username FROM account_data WHERE email = :email", [$email], [":email"]);
+            $data = DBConnection::read("SELECT id FROM account_data WHERE email = :email", [$email], [":email"]);
+            if ($data == False) {
+                return False;
+            }
+            return True;
+        }
+
+        public static function checkForUsernameTag($username, $tag) {
+            $data = DBConnection::read("SELECT id FROM account_data WHERE username = :username AND tag = :tag", [$username, $tag], ["username", "tag"]);
             if ($data == False) {
                 return False;
             }
@@ -26,8 +39,17 @@
             DBConnection::create("INSERT INTO account_data (username, email, passHashed, pin, id) VALUES (:username, :email, :passHashed, :pin, :id)", [$account->getUsername(), $account->getEmail(), $account->getPassHashed(), $account->getPin(), $account->getId()], [":username", ":email", ":passHashed", ":pin", ":id"]);
         }
 
+        public static function addFriendToAccountById($accountId, $friendId) {
+            $friends = DBConnection::read("SELECT friends FROM account_data WHERE id = :id", [$accountId], [":id"])[0];     //get json encoded frieds list
+            $friendsDecoded = json_decode($friends);                //decode friends list
+            array_push($friendsDecoded, intval($friendId));                 //add new friend
+            $friendsEncoded = json_encode($friendsDecoded);         //encode friends list
+            echo $friendsEncoded;
+            DBConnection::update("UPDATE account_data SET friends = :friends WHERE id = :id", [$accountId, $friendsEncoded], [":id", ":friends"]);         //update stored accounts friends list
+        }
+
         public static function checkForId($id) {
-            $data = DBConnection::read("SELECT id FROM account_data WHERE id = " . $id); //get any matching IDs from database
+            $data = DBConnection::read("SELECT id FROM account_data WHERE id = $id"); //get any matching IDs from database
             if (($data) == False) {     //check if there are any matching IDs
                 return False;
             } else {
@@ -36,13 +58,24 @@
         }
 
         public static function getAccountByEmail($email) {
-            $data = DBConnection::read("SELECT username, pin, id FROM account_data WHERE email=:email", [$email], [":email"]);
-            $account = new Account($data[0], $email, "", $data[1], $data[2]);
+            $data = DBConnection::read("SELECT username, tag, pin, id FROM account_data WHERE email=:email", [$email], [":email"]);
+            $account = new Account(username: $data["username"],tag: $data["tag"], email: $email, pin: $data["pin"], id: $data["id"]);
             return $account;
+        }
+
+        public static function getAccountById($id) {
+            $data = DBConnection::read("SELECT username, tag, email, pin FROM account_data WHERE id = $id");
+            $account = new Account(username: $data["username"],tag: $data["tag"], email: $data["email"], pin: $data["pin"], id: $id);
+            return $account;
+        }
+
+        public static function getFriendsById($id) {
+            $data = DBConnection::read("SELECT friends FROM account_data WHERE id = $id");
+            return json_decode($data[0]);
         }
     }
 
-    //account interactions is a class for functions that don't don't interract with the database but are required for validating inputted data and
+    //account functions is a class for functions that don't don't interract with the database but are required for validating inputted data and
     //preparing data for the database.
     class AccountFunctions {
         public static function validateUsername($username) {
@@ -54,9 +87,6 @@
 
         public static function validateEmail($email) {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {   //email should be verified as well, not just validated
-                return False;
-            }
-            if (AccountInteractions::checkForEmail($email)) {
                 return False;
             }
             return True;
@@ -106,30 +136,32 @@
         public static function generateId() {
             do {
                 $strId = strval(rand(0, PHP_INT_MAX));              //generate random numbers until the number is not in use
+                $strId = str_pad($strId, 19, "0", STR_PAD_LEFT);                 //pad to 19 digits long
             } while (AccountInteractions::checkForId($strId));
 
-            $strId = str_pad($strId, 19, "0", STR_PAD_LEFT);                 //pad to 19 digits long
             return $strId;
         }
 
-        public static function setLogInSessionVarsByEmail($email) {             //currently not in use because it wasn't working
-            //session_start();
-            // $account = AccountInteractions::getAccountByEmail($email);
-            // $_SESSION["email"] = $account->getEmail();
-            // $_SESSION["username"] = $account->getUsername();
-            // $_SESSION["pin"] = $account->getPin();
-            // $_SESSION["id"] = $account->getId();
+        public static function generateTagForUsername($username) {
+            do {
+                $tag = strval(rand(0, 99999));                              //generate tag
+                $strId = str_pad($tag, 5, "0", STR_PAD_LEFT);                 //pad to 5 digits long
+            } while (AccountInteractions::checkForUsernameTag($username, $tag));
+
+            return $tag;
         }
     }
 
     class Account {
         private $username;
+        private $tag;
         private $email;
         private $passHashed;
         private $pin;
         private $id;
 
         private $usernameSetResult;      //these hold the results of whether the last set attempt worked 
+        private $tagSetresult;
         private $emailSetResult;
         private $passwordSetResult;
         private $pinSetResult;
@@ -139,8 +171,9 @@
             return "Account object; username = $this->username; email = $this->email; id = $this->id; pin = $this->pin";
         }
         
-        public function __construct($username, $email, $passHashed, $pin, $id) {        //sets all attributes when object created
+        public function __construct($username = "", $tag = "", $email = "", $passHashed = "", $pin = "", $id = "") {        //sets all attributes when object created and defaults to ""
             $this->setUsername($username);
+            $this->setTag($tag);
             $this->setEmail($email);
             $this->setPassHashed($passHashed);
             $this->setPin($pin);
@@ -154,6 +187,10 @@
             } else {
                 $this->usernameSetResult = False;  
             }    
+        }
+
+        private function setTag($tag) {
+            $this->tag = $tag;
         }
 
         private function setEmail($email) {
@@ -188,6 +225,10 @@
             return $this->username;
         }
 
+        public function getTag() {
+            return $this->tag;
+        }
+
         public function getEmail() {
             return $this->email;
         }
@@ -206,6 +247,10 @@
 
         public function getUsernameSetResult() {
             return $this->usernameSetResult;
+        }
+
+        public function getTagSetResult() {
+            return $this->tagSetResult;
         }
 
         public function getEmailSetResult() {
