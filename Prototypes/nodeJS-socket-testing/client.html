@@ -1,0 +1,33 @@
+<html>
+	<body>
+		<ul id="messages"></ul>
+		<form>
+			<label for="messageBox">Message:</label>
+			<input id="messageBox" type="text"></input>
+			<input type="button" onclick="sendMessage()" value="Send"></input>
+		</form>
+	</body>
+<script>
+	messageBox = document.getElementById("messageBox");
+	messageContainer = document.getElementById("messages");
+	
+	let ws = new WebSocket("ws://localhost:8000");
+	
+	function showMessage(data) {
+		newMessageLi = document.createElement("Li");
+		newMessageLi.innerHTML = data;
+		messageContainer.appendChild(newMessageLi);
+	}
+
+	ws.addEventListener("message", (event)=>{
+    console.log(event.data);
+	showMessage(event.data);
+});
+
+	function sendMessage() {
+		message = messageBox.value;
+		ws.send(message);
+		messageBox.value = "";
+	}
+</script>
+</html>

@@ -36,15 +36,14 @@
         }
 
         public static function addAccountToDatabase($account) {
-            DBConnection::create("INSERT INTO account_data (username, email, passHashed, pin, id) VALUES (:username, :email, :passHashed, :pin, :id)", [$account->getUsername(), $account->getEmail(), $account->getPassHashed(), $account->getPin(), $account->getId()], [":username", ":email", ":passHashed", ":pin", ":id"]);
+            DBConnection::create("INSERT INTO account_data (username, tag, email, passHashed, pin, id) VALUES (:username, :tag, :email, :passHashed, :pin, :id)", [$account->getUsername(), $account->getTag(), $account->getEmail(), $account->getPassHashed(), $account->getPin(), $account->getId()], [":username", ":tag", ":email", ":passHashed", ":pin", ":id"]);
         }
 
         public static function addFriendToAccountById($accountId, $friendId) {
             $friends = DBConnection::read("SELECT friends FROM account_data WHERE id = :id", [$accountId], [":id"])[0];     //get json encoded frieds list
             $friendsDecoded = json_decode($friends);                //decode friends list
-            array_push($friendsDecoded, intval($friendId));                 //add new friend
+            array_push($friendsDecoded, $friendId);                 //add new friend
             $friendsEncoded = json_encode($friendsDecoded);         //encode friends list
-            echo $friendsEncoded;
             DBConnection::update("UPDATE account_data SET friends = :friends WHERE id = :id", [$accountId, $friendsEncoded], [":id", ":friends"]);         //update stored accounts friends list
         }
 
@@ -65,14 +64,131 @@
 
         public static function getAccountById($id) {
             $data = DBConnection::read("SELECT username, tag, email, pin FROM account_data WHERE id = $id");
+            if($data == False) {return False;}
             $account = new Account(username: $data["username"],tag: $data["tag"], email: $data["email"], pin: $data["pin"], id: $id);
             return $account;
         }
 
         public static function getFriendsById($id) {
             $data = DBConnection::read("SELECT friends FROM account_data WHERE id = $id");
+            if($data == False) {return False;}  //prevent it trying to decode "False" which is not JSON and does not have index 0
             return json_decode($data[0]);
         }
+
+        public static function checkForIdInFriendsList($accountId, $friendId) {
+            $friends = AccountInteractions::getFriendsById($accountId);
+            if ((array_search($friendId, $friends)) !== false) {
+                return True;
+            }
+            return False;
+        }
+
+        public static function checkForIdInIncomingFriendRequestsList($accountId, $friendId) {
+            $incomingFriendRequests = AccountInteractions::getIncomingFriendRequestsById($accountId);
+            if ((array_search($friendId, $incomingFriendRequests)) !== false) {
+                return True;
+            }
+            return False;
+        }
+
+        public static function checkForIdInOutgoingFriendRequestsList($accountId, $friendId) {
+            $outgoingFriendRequests = AccountInteractions::getOutgoingFriendRequestsById($accountId);
+            if ((array_search($friendId, $outgoingFriendRequests)) !== false) {
+                return True;
+            }
+            return False;
+        }
+
+        public static function getIncomingFriendRequestsById($id) {
+            $data = DBConnection::read("SELECT incomingFriendRequests FROM account_data WHERE id = $id");
+            return json_decode($data[0]);   //turn into list
+        }
+
+        public static function getOutgoingFriendRequestsById($id) {
+            $data = DBConnection::read("SELECT outgoingFriendRequests FROM account_data WHERE id = $id");
+            return json_decode($data[0]);   //turn into list
+        }
+
+        public static function becomeFriendsById($friend1, $friend2) {
+            AccountInteractions::addFriendToAccountById($friend1, $friend2);
+            AccountInteractions::addFriendToAccountById($friend2, $friend1);
+
+            if (in_array($friend1, AccountInteractions::getIncomingFriendRequestsById($friend2))) {
+                AccountInteractions::removeIncomingFriendRequestFromAccountById($friend1, $friend2);
+                AccountInteractions::removeOutgoingFriendRequestFromAccountById($friend1, $friend2);
+            }
+            if (in_array($friend2, AccountInteractions::getIncomingFriendRequestsById($friend1))) {
+                AccountInteractions::removeIncomingFriendRequestFromAccountById($friend2, $friend1);
+                AccountInteractions::removeOutgoingFriendRequestFromAccountById($friend2, $friend1);
+            }
+        }
+
+        public static function removeFriendById($friend1, $friend2) {
+            function removeFriend($friend1, $friend2) {
+                $friends = AccountInteractions::getFriendsById($friend1);
+                if($friends != False) {
+                    $newFriendsList = [];
+                    foreach($friends as $friend) {
+                        if($friend != $friend2) {
+                            array_push($newFriendsList, $friend);
+                        }
+                    }
+                    $newFriendsListEncoded = json_encode($newFriendsList);
+                    DBConnection::update("UPDATE account_data SET friends = :newFriendsListEncoded WHERE id = :id", [$friend1, $newFriendsListEncoded], [":id", ":newFriendsListEncoded"]);         //update stored accounts friends list
+                }
+            }
+
+            removeFriend($friend1, $friend2);
+            removeFriend($friend2, $friend1);
+        }
+
+        public static function friendRequestById($senderId, $recieverId) {
+            AccountInteractions::addOutgoingFriendRequestToAccountById($senderId, $recieverId);
+            AccountInteractions::addIncomingFriendRequestToAccountById($senderId, $recieverId);
+        }
+
+        public static function cancelFriendRequestById($senderId, $recieverId) {
+            AccountInteractions::removeIncomingFriendRequestFromAccountById($senderId, $recieverId);
+            AccountInteractions::removeOutgoingFriendRequestFromAccountById($senderId, $recieverId);
+        }
+
+        public static function addOutgoingFriendRequestToAccountById($senderId, $recieverId) {
+            $outgoingRequestsDecoded = AccountInteractions::getOutgoingFriendRequestsById($senderId);       //get request list
+            array_push($outgoingRequestsDecoded, $recieverId);                 //add new possible friend
+            $outgoingRequestsEncoded = json_encode($outgoingRequestsDecoded);         //encode list
+            DBConnection::update("UPDATE account_data SET outgoingFriendRequests = :outgoingFriendRequests WHERE id = :id", [$senderId, $outgoingRequestsEncoded], [":id", ":outgoingFriendRequests"]);         //update stored accounts outgoing friend requests list
+        }
+
+        public static function removeOutgoingFriendRequestFromAccountById($senderId, $recieverId) {
+            $outgoingRequests = AccountInteractions::getOutgoingFriendRequestsById($senderId);
+            $newOutgoingRequests = [];
+            foreach($outgoingRequests as $id) {
+                if ($id != $recieverId) {
+                    array_push($newOutgoingRequests, $id);
+                }
+            }
+            $outgoingRequestsEncoded = json_encode($newOutgoingRequests);
+            DBConnection::update("UPDATE account_data SET outgoingFriendRequests = :outgoingFriendRequests WHERE id = :id", [$senderId, $outgoingRequestsEncoded], [":id", ":outgoingFriendRequests"]);         //update stored accounts friends list
+        }
+
+        public static function addIncomingFriendRequestToAccountById($senderId, $recieverId) {
+            $incomingRequestsDecoded = AccountInteractions::getIncomingFriendRequestsById($recieverId);              //get requests list
+            array_push($incomingRequestsDecoded, $senderId);                 //add new possible friend
+            $incomingRequestsEncoded = json_encode($incomingRequestsDecoded);         //encode list
+            DBConnection::update("UPDATE account_data SET incomingFriendRequests = :incomingFriendRequests WHERE id = :id", [$recieverId, $incomingRequestsEncoded], [":id", ":incomingFriendRequests"]);         //update stored accounts friends list
+        }
+
+        public static function removeIncomingFriendRequestFromAccountById($senderId, $recieverId) {
+            $incomingRequests = AccountInteractions::getIncomingFriendRequestsById($recieverId);
+            $newIncomingRequests = [];
+            foreach($incomingRequests as $id) {
+                if ($id != $senderId) {
+                    array_push($newIncomingRequests, $id);
+                }
+            }
+            $incomingRequestsEncoded = json_encode($newIncomingRequests);
+            DBConnection::update("UPDATE account_data SET incomingFriendRequests = :outgoingFriendRequests WHERE id = :id", [$recieverId, $incomingRequestsEncoded], [":id", ":outgoingFriendRequests"]);         //update stored accounts friends list
+        } 
     }
 
     //account functions is a class for functions that don't don't interract with the database but are required for validating inputted data and

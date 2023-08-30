@@ -15,7 +15,7 @@
     </form>
     <br>
     
-    Username: <?php    echo $_SESSION["account"]->getUsername(); ?><br>
+    Username: <?php    echo $_SESSION["account"]->getUsername() . "#" . $_SESSION["account"]->getTag(); ?><br>
 
     <a href="../friends/friend-manager.php">Manage Friends</a><br><br>
     

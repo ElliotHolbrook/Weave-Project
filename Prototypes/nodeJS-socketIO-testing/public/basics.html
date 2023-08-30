@@ -1,0 +1,16 @@
+<h1>HELLO</h1>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    console.log(io);
+    const socket = io("http://localhost:8000");
+    console.log(socket);
+
+	socket.on("message", (data)=>{
+		console.log(data);
+	});
+	
+    socket.on("connect", ()=>{
+        console.log(socket.id);
+    });
+	
+</script>
