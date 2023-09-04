@@ -93,21 +93,20 @@
 
 		socket.on("recieveMessage", (data)=>{
 			console.log(data);
-			showMessage(data);
+			showMessage(data["message"]);
 		});
 
 		function sendMessage() {
 			message = messageBox.value;
 			if (message == "") {return};
 			messages.scrollTop = messageContainer.scrollHeight - messages.clientHeight;
-			socket.emit("sendMessage", {"messageText": message, "channelId": channelId});
+			socket.emit("sendMessage", {"messageText": message, "channelId": channelId.toString()});
 			messageBox.value = "";
 		}
 
-        var channelId = <?php echo $dms[0]["channelId"] ?>;
+        var channelId = "<?php echo $dms[0]["channelId"] ?>";
         function changeChatRecipient(selecter) {
             channelId = selecter.options[selecter.selectedIndex].getAttribute('data-channelId');
-
         }
 	</script>
 </html>

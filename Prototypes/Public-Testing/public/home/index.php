@@ -1,0 +1,125 @@
+<?php
+    require_once "../libraries/accounts.php";
+    require_once "../libraries/messages.php";
+    session_start();
+    
+    if (!isset($_SESSION["account"])) {
+        header("Location: ../login");
+    }
+
+    $dms = ChatInteractions::getDMsById($_SESSION["account"]->getId());
+?>
+<!DOCTYPE html>
+<html>
+    <h1>Home</h1><br>
+    <h3>Temp Chat</h3>
+    <select name="friend" id="friend" oninput="changeChatRecipient(this)">
+        <?php
+            foreach($dms as $dm) {
+                $friendAccount = AccountInteractions::getAccountById($dm["buddyId"]);
+                if($friendAccount != False) {
+                    $username = $friendAccount->getUsername();
+                    $tag = $friendAccount->getTag();
+                    echo "<option data-channelId='" . $dm["channelId"] . "'>$username#$tag</option>";
+                } else {
+                    AccountInteractions::removeFriendById($friendId, $_SESSION["account"]->getId());
+                }
+            }
+        ?>
+    </select>
+	<div><ul id="messages" style="background-color: rgb(230, 230, 230); overflow-y: scroll; max-height: 300px; min-height: 300px; width: 500px; overflow-x: hidden; word-wrap: break-word; maxlength: 4000"></ul>
+		<label for="messageBox">Message:</label>
+		<input id="messageBox" type="text" autocomplete="off"></input>
+		<input id="sendButton" type="button" onclick="sendMessage()" value="Send"></input>
+	</div>
+    <br>
+    
+    Username: <?php    echo $_SESSION["account"]->getUsername() . "#" . $_SESSION["account"]->getTag(); ?><br>
+
+    <a href="../friends/friend-manager.php">Manage Friends</a><br><br>
+    
+    <form action="../controller/logOut.php" method="get">
+        <button type="submit">Log Out</button>
+    </form>
+
+    <script src="startup.js"></script>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" 
+			integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" 
+			crossorigin="anonymous">
+	</script>
+	<script>
+		// Get the input field
+		var input = document.getElementById("messageBox");
+
+		// Execute a function when the user presses a key on the keyboard
+		input.addEventListener("keypress", function(event) {
+		  // If the user presses the "Enter" key on the keyboard
+		  if (event.key === "Enter") {
+			// Cancel the default action, if needed
+			event.preventDefault();
+			// Trigger the button element with a click
+			document.getElementById("sendButton").click();
+		  }
+		});
+		
+		
+		
+		console.log(io);
+		const socket = io("http://weave.kayakraft.net:8000/");
+		console.log(socket);
+		
+
+
+		socket.on("connect", ()=>{
+			socket.emit("id", getCookie("id"));
+		});
+		
+		
+		messageBox = document.getElementById("messageBox");
+		messageContainer = document.getElementById("messages");
+		
+		function showMessage(data) {
+			doScroll = false; //don't scroll to see new message by default
+			if(Math.abs(messageContainer.scrollHeight - messages.clientHeight - messages.scrollTop) < 20) { 
+				doScroll = true;        //if scrolled within 20px of the bottom of the box then scroll after
+			}
+			newMessageLi = document.createElement("Li");        //showing message
+			newMessageLi.innerHTML = data;
+			messageContainer.appendChild(newMessageLi);
+			if(doScroll){
+				messages.scrollTop = messageContainer.scrollHeight - messages.clientHeight; //scroll to new bottom of the box
+			}
+		}
+
+		socket.on("recieveMessage", (data)=>{
+			console.log(data);
+			if(data["channelId"] == channelId) {
+				showMessage(data["message"]);
+			}
+		});
+
+		function sendMessage() {
+			message = messageBox.value;
+			if (message == "") {return};
+			messages.scrollTop = messageContainer.scrollHeight - messages.clientHeight;
+			console.log({"messageText": message, "channelId": channelId.toString()});
+			socket.emit("sendMessage", {"messageText": message, "channelId": channelId.toString()});
+			messageBox.value = "";
+		}
+
+        var channelId = "<?php echo $dms[0]["channelId"] ?>";
+		savedMessages = {};
+        function changeChatRecipient(selecter) {
+            savedMessages[channelId] = [...messageContainer.children];
+			channelId = selecter.options[selecter.selectedIndex].getAttribute('data-channelId');
+			
+			messageContainer.innerHTML = "";
+			if(savedMessages[channelId] !== undefined) {
+				savedMessages[channelId].forEach((message)=>{
+					messageContainer.append(message);
+				});
+			}
+        }
+	</script>
+</html>
+</html>
