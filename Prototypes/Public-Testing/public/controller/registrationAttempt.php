@@ -26,7 +26,7 @@
         header("Location:  ../login/register.php?error=invalid-email&username=$username&pin=$pin");
     }
     
-    $account = new Account(username: $username, tag: $tag, email: $email, passHashed: $passHash, pin: $pin, id: $id);
+    $account = new Account(username: $username, tag: strval($tag), email: $email, passHashed: $passHash, pin: $pin, id: $id);
     
     if (!$account->getUsernameSetResult()) {
         header("Location:  ../login/register.php?error=invalid-username&email=$email&pin=$pin");     //make sure the username is valid

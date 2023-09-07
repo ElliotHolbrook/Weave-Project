@@ -3,7 +3,7 @@
     $api = new MulticraftAPI('https://panel.pebblehost.com/api.php', 'elliotbholbrook@gmail.com', 'Mr*Pps=o8S8HNJ');    //501962
     //print_r($api->getServerStatus(1, true)) . "<br><br>";
 
-    $id = 427270;
+    $id = 567148;
 
     
     $stats = $api->getServerStatus($id, true)["data"];

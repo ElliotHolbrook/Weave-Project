@@ -107,7 +107,13 @@
 
         public static function getOutgoingFriendRequestsById($id) {
             $data = DBConnection::read("SELECT outgoingFriendRequests FROM account_data WHERE id = $id");
-            return json_decode($data[0]);
+            $returnData = [];
+            foreach(json_decode($data[0]) as $id) {
+                if($id !== "") {  
+                    array_push($returnData, $id);
+                }
+            }
+            return $returnData;
         }
 
         public static function becomeFriendsById($friend1, $friend2) {
@@ -269,6 +275,16 @@
 
             return $tag;
         }
+
+        public static function validateId($id) {
+            if(gettype($id) !== "string") {
+                return False;
+            }
+            if((is_numeric($id)) && (strlen($id) == 19)) {
+                return True;
+            } 
+            return False;
+        }
     }
 
     class Account {
@@ -280,7 +296,7 @@
         private $id;
 
         private $usernameSetResult;      //these hold the results of whether the last set attempt worked 
-        private $tagSetresult;
+        private $tagSetResult;
         private $emailSetResult;
         private $passwordSetResult;
         private $pinSetResult;
@@ -309,6 +325,10 @@
         }
 
         private function setTag($tag) {
+            if((gettype($tag) !== "string") || (strlen($tag) !== 5) || (!is_numeric($tag))) {
+                $this->tagSetResult = False;
+                return;
+            }
             $this->tag = $tag;
         }
 

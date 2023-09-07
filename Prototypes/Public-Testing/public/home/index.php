@@ -21,9 +21,9 @@
                     $username = $friendAccount->getUsername();
                     $tag = $friendAccount->getTag();
                     echo "<option data-channelId='" . $dm["channelId"] . "'>$username#$tag</option>";
-                } else {
-                    AccountInteractions::removeFriendById($friendId, $_SESSION["account"]->getId());
-                }
+                } // else {
+                //     AccountInteractions::removeFriendById($friendId, $_SESSION["account"]->getId());
+                // }
             }
         ?>
     </select>
@@ -95,6 +95,15 @@
 			console.log(data);
 			if(data["channelId"] == channelId) {
 				showMessage(data["message"]);
+			} else {
+				let newMessage = document.createElement("Li");
+				newMessage.innerHTML = data["message"];
+				if(savedMessages[data["channelId"]] !== undefined) {
+					console.log(savedMessages[data["channelId"]]);
+					savedMessages[data["channelId"]].push(newMessage);
+				} else {
+					savedMessages[data["channelId"]] = [newMessage];
+				}
 			}
 		});
 

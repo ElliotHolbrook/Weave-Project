@@ -1,7 +1,6 @@
 const http = require("http");               //native module
 const socketio = require("socket.io");      //imported module
 //const con = require("./dbConnect");         //js file in same dir
-const { channel } = require("diagnostics_channel");     //idk what this is
 
 server = http.createServer((req, res)=>{
 	res.end("Connected Successfully");          //http server to handle initial http requests
@@ -104,7 +103,7 @@ io.on("connection", (sock)=>{
 
             participantsList.forEach((value)=>{
                 participantSocket = getSocketByUserId(value);
-                if(participantSocket == sock) { console.log("tru")};
+                //if(participantSocket == sock) { console.log("tru")};
                 console.log("Attempting send to " + value);
                 if(participantSocket !== false) {
                     console.log("--- DUMP --- \n|user: " + typeof user + " '" + user + "' \n|data['channelId']: " + typeof data["channelId"] + " '" + data["channelId"] + "' \n|data['messageText']: " + typeof data['messageText'] + " '" + data['messageText'] + "' \n|Participants: " + participants + "\n|Participant Socket: " + participantSocket);

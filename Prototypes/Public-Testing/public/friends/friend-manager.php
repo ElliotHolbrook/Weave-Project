@@ -52,6 +52,9 @@ Provides immediate response to typing. Then when user submits data it is sent to
         } else {
             echo "<span id=\"noOutgoingSpan\" style=\"display: none;\">You have no outgoing friend requests to display</span>";
             foreach($outgoingFriendIds as $outgoingFriendId) {
+                if(!AccountFunctions::validateId($outgoingFriendId)) {
+                    return;
+                }
                 $outgoingFriendAccount = AccountInteractions::getAccountById($outgoingFriendId);
                 if($outgoingFriendAccount != False) {       
                     $username = $outgoingFriendAccount->getUsername();
