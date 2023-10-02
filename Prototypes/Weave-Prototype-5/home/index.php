@@ -27,7 +27,16 @@
             }
         ?>
     </select>
-	<div><ul id="messages" style="background-color: rgb(230, 230, 230); overflow-y: scroll; max-height: 300px; min-height: 300px; width: 500px; overflow-x: hidden; word-wrap: break-word; maxlength: 4000"></ul>
+	<div><ul id="messages" style="
+								 background-color: rgb(230, 230, 230);
+								 overflow-y: scroll;
+								 max-height: 300px;
+								 min-height: 300px;
+								 width: 500px;
+								 overflow-x: hidden;
+								 word-wrap: break-word;
+								 maxlength: 4000"
+			></ul>
 		<label for="messageBox">Message:</label>
 		<input id="messageBox" type="text" autocomplete="off"></input>
 		<input id="sendButton" type="button" onclick="sendMessage()" value="Send"></input>
