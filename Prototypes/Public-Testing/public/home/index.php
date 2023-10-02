@@ -65,7 +65,7 @@
 		
 		
 		console.log(io);
-		const socket = io("http://weave.kayakraft.net:8000/");
+		const socket = io("http://localhost:8000/");
 		console.log(socket);
 		
 

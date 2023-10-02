@@ -8,7 +8,7 @@ server = http.createServer((req, res)=>{
 
 const io = socketio(server, {
     cors: {                                 //socket io server to handle ws connections
-      origin: 'http://weave.kayakraft.net'}  
+      origin: 'http://localhost'}  
     });
 
 var mysql = require('mysql2');
@@ -65,10 +65,10 @@ function getChannelParticipants(channelId) {
 }
 
 io.on("connection", (sock)=>{
-    console.log("New connection: " + sock.id);
+    console.log("New connection: " + sock.id);      //log connection in console
     
     sock.on("id", (data)=>{
-        clients.push({"socketId": sock.id, "userId": data});
+        clients.push({"socketId": sock.id, "userId": data});                                                    //add client to clien list
         con.query("SELECT username, tag FROM account_data WHERE id = '" + data + "'", (err, result)=> {
             if(err !== null) { console.log(err) };
             console.log(result[0]["username"] + "#" + result[0]["tag"] + " connected to the server!");  

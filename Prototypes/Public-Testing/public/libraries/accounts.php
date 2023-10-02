@@ -37,7 +37,10 @@
         }
 
         public static function addAccountToDatabase($account) {
-            DBConnection::create("INSERT INTO account_data (username, tag, email, passHashed, pin, id) VALUES (:username, :tag, :email, :passHashed, :pin, :id)", [$account->getUsername(), $account->getTag(), $account->getEmail(), $account->getPassHashed(), $account->getPin(), $account->getId()], [":username", ":tag", ":email", ":passHashed", ":pin", ":id"]);
+            DBConnection::create("INSERT INTO account_data (username, tag, email, passHashed, pin, id) VALUES (:username, :tag, :email, :passHashed, :pin, :id)",           //sql statement
+                                 [$account->getUsername(), $account->getTag(), $account->getEmail(), $account->getPassHashed(), $account->getPin(), $account->getId()],     //variables for prepped statements
+                                 [":username", ":tag", ":email", ":passHashed", ":pin", ":id"]                                                                         //references
+                                );
         }
 
         public static function addFriendToAccountById($accountId, $friendId) {
@@ -102,13 +105,19 @@
 
         public static function getIncomingFriendRequestsById($id) {
             $data = DBConnection::read("SELECT incomingFriendRequests FROM account_data WHERE id = $id");
-            return json_decode($data[0]);
+            $returnData = [];
+            foreach(json_decode($data[0]) as $id) {         //removing any empty items
+                if($id !== "") {  
+                    array_push($returnData, $id);
+                }
+            }
+            return $returnData;
         }
 
         public static function getOutgoingFriendRequestsById($id) {
             $data = DBConnection::read("SELECT outgoingFriendRequests FROM account_data WHERE id = $id");
             $returnData = [];
-            foreach(json_decode($data[0]) as $id) {
+            foreach(json_decode($data[0]) as $id) {         //removing any empty items
                 if($id !== "") {  
                     array_push($returnData, $id);
                 }
@@ -190,7 +199,7 @@
         public static function removeIncomingFriendRequestFromAccountById($senderId, $recieverId) {
             $incomingRequests = AccountInteractions::getIncomingFriendRequestsById($recieverId);
             $newIncomingRequests = [];
-            foreach($incomingRequests as $id) {
+            foreach($incomingRequests as $id) {         //new list without sender ID
                 if ($id != $senderId) {
                     array_push($newIncomingRequests, $id);
                 }

@@ -29,7 +29,7 @@ Provides immediate response to typing. Then when user submits data it is sent to
             echo "<span id=\"noIncomingSpan\" style=\"display: none;\">You have no incoming friend requests to display</span>"; //else hides no friends message with display: none
             foreach($incomingFriendIds as $incomingFriendId) {
                 $incomingFriendAccount = AccountInteractions::getAccountById($incomingFriendId);        //get account of friend so display attributes can be used
-                if($incomingFriendAccount != False) {                                 //getAccountById() returns false if the ID cannot be found so it ignores these if the account hasn't been deleted properly or a value has been inputted incorrectly
+                if($incomingFriendAccount !== False) {                                 //getAccountById() returns false if the ID cannot be found so it ignores these if the account hasn't been deleted properly or a value has been inputted incorrectly
                     $username = $incomingFriendAccount->getUsername();                      //get username and tag of user for display
                     $tag = $incomingFriendAccount->getTag();                    
                     //outputting profile information for viewing. ID is used for identifying the displayed user account in later javascript functions pointed to by the buttons,
@@ -160,11 +160,11 @@ Provides immediate response to typing. Then when user submits data it is sent to
         const xhttp = new XMLHttpRequest();             //sending the AJAX request to check for and add the inputted user
         xhttp.onload = function() {
             if(this.responseText) {
-                notifier.innerHTML = "Friend Request Successfully Sent";
+                notifier.innerHTML = "Friend Request Successfully Sent";        //telling the user that the friend request was recieved successfully
             }
         }
         xhttp.open("GET", "addFriend.php?username=" + encodeURIComponent(username) + "&tag=" +  encodeURIComponent(tag));       
-        xhttp.send();   
+        xhttp.send();  
             }
     
     function cancelFriendRequest(div) {
@@ -178,15 +178,15 @@ Provides immediate response to typing. Then when user submits data it is sent to
                 notifier.innerHTML = "Friend Request Successfully Cancelled";
                 div.parentNode.remove();
                 
-                let numOfListElements = 0;
+                let numOfListElements = 0;              //checking to see if the no requests message needs to come up
                 document.getElementById("outgoingRequestsList").childNodes.forEach(function(currentValue, currentIndex, listObj) {
-                if (currentValue.tagName == "LI") {
+                if (currentValue.tagName == "LI") {     //counting specifically list elements
                     numOfListElements++;
                 }
             })
             
             if(numOfListElements == 0) {
-                document.getElementById("noOutgoingSpan").style.display = "inline";
+                document.getElementById("noOutgoingSpan").style.display = "inline";             //displaying no requests message
             }
             }
         }
@@ -194,20 +194,20 @@ Provides immediate response to typing. Then when user submits data it is sent to
         xhttp.send();   
     }
 
-    function ignoreFriendRequest(div) {
-        divId = div.id;
+    function ignoreFriendRequest(div) {         
+        divId = div.id;                                     //get user id from element id
         notifier = document.getElementById("friendFoundNotifier");
-        id = divId.split(":")[1];
+        id = divId.split(":")[1];                       
         
         const xhttp = new XMLHttpRequest();             //sending the AJAX request to check for and add the inputted user
         xhttp.onload = function() {
             if (this.responseText) {
-                notifier.innerHTML = "Friend Request Successfully Ignored";
+                notifier.innerHTML = "Friend Request Successfully Ignored";         //update notifier
                 div.parentNode.remove();
                 
-                let numOfListElements = 0;
+                let numOfListElements = 0;                      //check to see how many elements there are
                 document.getElementById("incomingRequestsList").childNodes.forEach(function(currentValue, currentIndex, listObj) {
-                if (currentValue.tagName == "LI") {
+                if (currentValue.tagName == "LI") {         
                     numOfListElements++;
                 }
             })
@@ -230,17 +230,6 @@ Provides immediate response to typing. Then when user submits data it is sent to
             if(this.responseText) {
                 notifier.innerHTML = "Friend Request Accepted";
             }
-            
-            // let numOfListElements = 0;
-            // document.getElementById("incomingRequestsList").childNodes.forEach(function(currentValue, currentIndex, listObj) {
-            //     if (currentValue.tagName == "LI") {
-            //         numOfListElements++;
-            //     }
-            // })
-            // if(numOfListElements == 0) {
-            //     document.getElementById("noOutgoingSpan").style.display = "inline";
-            //     alert();
-            // }
         }
         xhttp.open("GET", "addFriend.php?id=" + encodeURIComponent(id));
         xhttp.send();   
