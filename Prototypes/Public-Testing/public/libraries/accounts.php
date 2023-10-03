@@ -141,22 +141,22 @@
             }
         }
 
-        public static function removeFriendById($friend1, $friend2) {
-            function removeFriend($friend1, $friend2) {
-                $friends = AccountInteractions::getFriendsById($friend1);
-                if($friends != False) {
+        public static function removeFriendById($friend1, $friend2) { 
+            function removeFriend($friend1, $friend2) {                     //removes friend from friendlist
+                $friends = AccountInteractions::getFriendsById($friend1);       //get friends
+                if($friends != False) {                 //check if user has friends
                     $newFriendsList = [];
-                    foreach($friends as $friend) {
+                    foreach($friends as $friend) {              //removing friend ID from list
                         if($friend != $friend2) {
                             array_push($newFriendsList, $friend);
                         }
                     }
-                    $newFriendsListEncoded = json_encode($newFriendsList);
+                    $newFriendsListEncoded = json_encode($newFriendsList);      //updating friends list
                     DBConnection::update("UPDATE account_data SET friends = :newFriendsListEncoded WHERE id = :id", [$friend1, $newFriendsListEncoded], [":id", ":newFriendsListEncoded"]);         //update stored accounts friends list
                 }
             }
 
-            removeFriend($friend1, $friend2);
+            removeFriend($friend1, $friend2);       //remove friendship from both ends
             removeFriend($friend2, $friend1);
         }
 
