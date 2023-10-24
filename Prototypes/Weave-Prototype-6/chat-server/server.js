@@ -77,27 +77,45 @@ function checkChatIdExists(id) {
 }
 
 function generateId() {
+    return new Promise((resolve, reject) => {
     partOne = Math.floor(Math.random() * (9999999999)).toString().padStart(9, "0");
     partTwo = Math.floor(Math.random() * (99999999999)).toString().padStart(10, "0");
-    return partOne + partTwo;
+    resolve(partOne + partTwo);
     //return "1";
+        })
 }
 
-async function generateChatId() {
+function generateChatId() {
+    // function generateAndCheckIdValid() {
+    //     return generateId().then((generatedId) => {
+    //         console.log("ID generated - " + generatedId);
+    //         return checkChatIdExists(generatedId).then((validId) => {
+    //         //     console.log("ID approved - " + validId);
+    //              return validId;
+    //          })
+    //         }).catch((message) => {
+    //             console.log(message);
+    //             return generateAndCheckIdValid();            //stay in the loop if id does exist
+    //         })
+    // }
+
+    // return generateAndCheckIdValid();
+    
     async function generateAndCheckIdValid() {
         let id = await generateId();
         console.log("ID generated - " + id);
-        checkChatIdExists(id).then((validId) => {
-            return validId;       
-        }).catch((message) => {
-            console.log(message);
-            return generateAndCheckIdValid();            //stay in the loop if id does exist
-        })
-    }
+        try {
+          const validId = await checkChatIdExists(id);
+          return validId;
+          // If you prefer, the above 2 lines can be shortened to:
+          // return await checkChatIdExists(id);
+        } catch (message) {
+          console.log(message);
+          return generateAndCheckIdValid()
+        }
+      }
 
-    let id = await generateAndCheckIdValid();
-    return id;
-    
+    return generateAndCheckIdValid();
 
     //do {
         // partOne = Math.floor(Math.random() * (9999999999)).toString().padStart(9, "0");
@@ -159,7 +177,7 @@ async function generateChatId() {
 
 
 
-    return id;
+    //return id;
 }
 
 function saveMessageToDatabase(id, channelId, senderId, textContent) {
