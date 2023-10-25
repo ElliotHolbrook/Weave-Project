@@ -81,107 +81,26 @@ function generateId() {
     partOne = Math.floor(Math.random() * (9999999999)).toString().padStart(9, "0");
     partTwo = Math.floor(Math.random() * (99999999999)).toString().padStart(10, "0");
     resolve(partOne + partTwo);
-    //return "1";
         })
 }
 
 function generateChatId() {
-    // function generateAndCheckIdValid() {
-    //     return generateId().then((generatedId) => {
-    //         console.log("ID generated - " + generatedId);
-    //         return checkChatIdExists(generatedId).then((validId) => {
-    //         //     console.log("ID approved - " + validId);
-    //              return validId;
-    //          })
-    //         }).catch((message) => {
-    //             console.log(message);
-    //             return generateAndCheckIdValid();            //stay in the loop if id does exist
-    //         })
-    // }
-
-    // return generateAndCheckIdValid();
-    
-    async function generateAndCheckIdValid() {
-        let id = await generateId();
-        console.log("ID generated - " + id);
-        try {
-          const validId = await checkChatIdExists(id);
-          return validId;
-          // If you prefer, the above 2 lines can be shortened to:
-          // return await checkChatIdExists(id);
-        } catch (message) {
-          console.log(message);
-          return generateAndCheckIdValid()
-        }
-      }
+    function generateAndCheckIdValid() {
+        return generateId().then((generatedId) => {
+            console.log("ID generated - " + generatedId);
+            return checkChatIdExists(generatedId).catch((message) => {
+                console.log(message);
+                return generateAndCheckIdValid();            //stay recursing if id does exist
+            })
+        })
+    }
 
     return generateAndCheckIdValid();
-
-    //do {
-        // partOne = Math.floor(Math.random() * (9999999999)).toString().padStart(9, "0");
-        // partTwo = Math.floor(Math.random() * (99999999999)).toString().padStart(10, "0");
-        // id = partOne + partTwo;
-        // id = "1";
-        
-        
-        // let isUnique = new Promise((resolve, reject) => {
-        //     con.query("SELECT id FROM messages WHERE id = " + id, (err, result)=>{
-        //         if(err !== null) { console.log(err) };
-        //         console.log(idExists);
-        //         if(result.length == 0) {
-        //             resolve("ID was Unique");  //newly generated id is okay
-        //         } else {
-        //             reject("ID was not Unique");  //newly generated id was not okay
-        //         }
-        //         // console.log("result.length: " + result.length);
-        //         // console.log("exists inside function: " + idExists)
-        //     })
-        // })
-        
-        // con.query("SELECT id FROM messages WHERE id = " + id, (err, result)=>{
-        //     if(err !== null) { console.log(err) };
-        //     console.log(idExists);
-        //     if(result.length != 0) {
-        //         idExists = true;
-        //     }
-        //     console.log("result.length: " + result.length);
-        //     console.log("exists inside function: " + idExists)
-        // })
-
-        // let existingChats = await con.query("SELECT id FROM messages WHERE id = " + id);
-        // console.log(existingChats);
-        // if(existingChats.length != 0) {
-        //     idExists = true;
-        // }
-        // console.log("result.length: " + result.length);
-        // console.log("exists inside function: " + idExists)
-        
-        // isUnique.then((message) => {
-        //     console.log(message);
-        //     idExists = false;
-        // }).catch((message) => {
-        //     console.log(message);
-        //     idExists = true;
-        // })
-
-        // console.log("^-^");
-        // console.log("exists outside function: " + idExists);
-        // console.log(toString(Math.floor(Math.random() * (9999999999))));
-        //console.log("hello")
-
-        //console.log(generateAndCheckIdValid());
-
-
-
-    //} while (idExists);
-
-
-
-    //return id;
 }
 
 function saveMessageToDatabase(id, channelId, senderId, textContent) {
-    con.query("INSERT INTO messages (id, channelId, senderId, textContent) VALUES ('" + id + "','" + channelId + "','" + senderId + "','" + textContent + "')")
+    con.query("INSERT INTO messages (id, channelId, senderId, textContent, dateTime) VALUES (?, ?, ?, ?, ?)", 
+        [id, channelId, senderId, textContent, new Date().getTime()]);
 }
 
 function getChannelParticipants(channelId) {
@@ -227,7 +146,9 @@ io.on("connection", (sock)=>{
         console.log("----------------------------------------");
         con.query("SELECT participants FROM channel_data WHERE id = ?", [data["channelId"]], (err, result)=> {                  //get people to send the chats to
             if(err !== null) { console.log(err); return };    
-            saveMessageToDatabase(generateChatId(), data["channelId"], user, data["messageText"]);     //save message                                                                     //check for errors
+            generateChatId().then((id) => {
+                saveMessageToDatabase(id, data["channelId"], user, data["messageText"]);     //save message                                                                     //check for errors
+            });
             participants = result[0]["participants"];
             participantsList = JSON.parse(participants);                                    //decode participant information into usable list
             
