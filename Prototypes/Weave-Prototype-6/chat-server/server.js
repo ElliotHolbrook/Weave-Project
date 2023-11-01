@@ -99,7 +99,7 @@ function generateChatId() {
 }
 
 function saveMessageToDatabase(id, channelId, senderId, textContent) {
-    con.query("INSERT INTO messages (id, channelId, senderId, textContent, dateTime) VALUES (?, ?, ?, ?, ?)", 
+    con.query("INSERT INTO messages (id, channelId, senderId, textContent, dateTimeSent) VALUES (?, ?, ?, ?, ?)", 
         [id, channelId, senderId, textContent, new Date().getTime()]);
 }
 

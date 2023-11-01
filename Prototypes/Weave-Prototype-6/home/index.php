@@ -27,7 +27,9 @@
             }
         ?>
     </select>
-	<div><ul id="messages" style="background-color: rgb(230, 230, 230); overflow-y: scroll; max-height: 300px; min-height: 300px; width: 500px; overflow-x: hidden; word-wrap: break-word; maxlength: 4000"></ul>
+	<div><ul id="messages" style="background-color: rgb(230, 230, 230); overflow-y: scroll; max-height: 300px; min-height: 300px; width: 500px; overflow-x: hidden; word-wrap: break-word; maxlength: 4000">
+			
+		</ul>
 		<label for="messageBox">Message:</label>
 		<input id="messageBox" type="text" autocomplete="off"></input>
 		<input id="sendButton" type="button" onclick="sendMessage()" value="Send"></input>
@@ -83,7 +85,7 @@
 				doScroll = true;        //if scrolled within 20px of the bottom of the box then scroll after
 			}
 			newMessageLi = document.createElement("Li");        //showing message
-			newMessageLi.innerHTML = data;
+			newMessageLi.innerHTML = data["message"];
 			messageContainer.appendChild(newMessageLi);
 			if(doScroll){
 				messages.scrollTop = messageContainer.scrollHeight - messages.clientHeight; //scroll to new bottom of the box
@@ -93,7 +95,7 @@
 		socket.on("recieveMessage", (data)=>{
 			console.log(data);
 			if(data["channelId"] == channelId) {
-				showMessage(data["message"]);
+				showMessage(data);
 			} else {
 				let newMessage = document.createElement("Li");
 				newMessage.innerHTML = data["message"];
@@ -115,6 +117,31 @@
 			messageBox.value = "";
 		}
 
+		function getMessagesFromDB(channelId, startIndex, endIndex) {
+			return new Promise((resolve, reject) => {
+				let messages = {};
+				const xhttp = new XMLHttpRequest();             //sending the AJAX request to get messages from the server
+				xhttp.onload = function() {
+					let messages = [];
+					console.log("Recieved Data:");
+					let data = JSON.parse(this.responseText);
+					console.log(data);
+					Object.keys(data).forEach((key) => {
+						let value = data[key];
+						let newMessage = document.createElement("Li");
+						newMessage.innerHTML = value["textContent"];
+						messages.push(newMessage);
+					}); 
+					console.log("Data");
+					console.log(messages);
+					
+					resolve(messages);
+				}
+				xhttp.open("GET", "fetchMessages.php?channelId=" + encodeURIComponent(channelId) + "&startIndex=" +  encodeURIComponent(startIndex) + "&endIndex=" +  encodeURIComponent(endIndex));       
+				xhttp.send();  
+			})
+		}
+
         var channelId = "<?php echo $dms[0]["channelId"] ?>";			//default to 1st DM channel
 		savedMessages = {};												//set saved messages to {} on page load
         function changeChatRecipient(selecter) {						//run when the selecter switches to a new channel
@@ -123,12 +150,26 @@
 			channelId = selecter.options[selecter.selectedIndex].getAttribute('data-channelId');	//get the channel ID that is to be switched to
 			
 			messageContainer.innerHTML = "";									//delete old messages
-			if(savedMessages[channelId] !== undefined) {						//fill with new messages
-				savedMessages[channelId].forEach((message)=>{
+			
+			if((savedMessages[channelId] == undefined) || (savedMessages[channelId].length == 0)) {							//if no messages saved then get 30 most recent messages
+				getMessagesFromDB(channelId, 1, 30).then((messages) => {
+					savedMessages[channelId] = messages;
+					console.log(savedMessages);
+					console.log("Displaying messages");
+					savedMessages[channelId].forEach((message)=>{			//display messages
+						messageContainer.append(message);
+					});
+				})
+			} else {
+				console.log("Displaying messages");
+				savedMessages[channelId].forEach((message)=>{		//display messages
 					messageContainer.append(message);
 				});
 			}
-        }
+			
+		}
+
+		changeChatRecipient(document.getElementById("friend"));			//update to show chats when page loads
 	</script>
 </html>
 </html>
