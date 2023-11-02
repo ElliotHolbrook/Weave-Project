@@ -217,25 +217,27 @@
 				savedMessages[channelId].forEach((message)=>{		//display messages
 					messageContainer.append(message);
 				});
+				resolve();
 			}
 			})
 			
-			displayMessages.then(() => {messages.scrollTop = messageContainer.scrollHeight - messages.clientHeight;})
+			displayMessages.then(() => {
+				messages.scrollTop = messageContainer.scrollHeight - messages.clientHeight;
+				console.log("scrolling");
+			})
 		}
 
 		changeChatRecipient(document.getElementById("friend"));			//update to show chats when page loads
 
-		var loadPending = false;
-		messages.onscroll = () => {
-			if(loadPending) {
-				return;
-			}
+		// var loadPending = true;
+		// messages.onscroll = () => {
+		// 	if(loadPending) {
+		// 		return;
+		// 	}
 			
-			loadPending = true;
-			alert();
-			loadPending = false;
-			console.log(messages.scrollTop);
-		}
+		// 	loadPending = true;
+		// 	console.log(messages.scrollTop);
+		// }
 	</script>
 </html>
 </html>
