@@ -1,0 +1,190 @@
+body {
+  background-color: #bdbdbd;
+  overflow-y: hidden;   /*Prevent Scrolling Whole Page*/
+  overflow-x: hidden;
+  padding: 1%;
+  max-height: 100vh;
+  width: 100%;
+  position: fixed;
+}
+
+html {
+  height: 100vw;
+}
+
+.page-container {
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  border-radius: 3px;
+  display: grid;
+  grid-gap: 5px;
+  grid-template-columns: 50px 180px auto 180px; /*Hubs Channels Chatting Participants*/
+  padding: 5px;
+}
+
+.panel {
+  background-color: #bdbdbd;
+  border-radius: 3px;
+  padding: 5px;
+}
+
+.hub-panel {
+  grid-column: 1;
+}
+
+.channel-panel {
+  grid-column:  2;
+  display: grid;
+  grid-template-rows: 180px 30px auto 30px;
+}
+
+.chat-panel {
+  grid-column: 3;
+}
+
+.participant-panel {
+  grid-column: 4;
+}
+
+.home-button {
+  background-color: #4d4d4d;
+  border-radius: 3px;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 10px;
+  transition: background-color 2s;
+}
+
+.home-button:hover {
+  background-color: #0ac43c;
+  transition: background-color 50ms;
+  transition-timing-function: ease-in-out;
+}
+
+.home-icon {
+  margin-left: 50%;
+  margin-top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hub-icon {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  background-color: #4d4d4d;
+  margin-top: 5px;
+  margin-left: 50%;
+  transform: translate(-50%, 0%);
+  text-align: center;
+  transition: background-color 2s, border-radius 2s;
+}
+
+.hub-icon:hover {
+  border-radius: 30%;
+  background-color: #0247d1;
+  transition: background-color 50ms, border-radius 50ms;
+  transition-timing-function: ease-in-out;
+}
+
+.hub-icon-text {
+  position: relative;
+  top: 50%;
+  transform: translate(0, -50%);
+  font-size: 10px;
+}
+
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+.add-hub-button {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  background-color: #4d4d4d;
+  margin-top: 5px;
+  margin-left: 50%;
+  transform: translate(-50%, 0%);
+  text-align: center;
+  transition: background-color 2s;
+}
+
+.add-hub-button:hover {
+  background-color: #6d0ac4;
+  transition: background-color 50ms;
+  transition-timing-function: ease-in-out;
+}
+
+.add-hub-icon {
+  position: relative;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.profile-box {
+  grid-row: 1;
+}
+
+.rotate-on-hover {
+  display: inline-block;
+  transition-duration: 1s;
+}
+
+.rotate-on-hover:hover {
+  animation-name: rotate;
+  animation-iteration-count: infinite;
+  animation-duration: 2s;
+  animation-timing-function: linear;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+.pfp-container {
+  border-radius: 50%;
+  height: 80px;
+  width: 80px;
+  background-image: url(../home/pfp.jpg);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin-left: 50%;
+  margin-top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.chat-searcher-container {
+  background-color: #4d4d4d;
+  width: 100%;
+  height: 30px;
+  border-radius: 5px;
+  padding: 3px;
+  display: grid;
+  grid-template-columns: 80% 20%;
+  grid-gap: 2px;
+}
+
+.chat-searcher-input {
+  background-color: white;
+  border-radius: 5px;
+  height: 20px;
+  width: 100%;
+  height: 110%;
+  grid-column: 1;
+}
+
+.chat-searcher-button {
+  grid-column: 2;
+  border-radius: 5px;
+  height: 110%;
+  width: 95%;
+}

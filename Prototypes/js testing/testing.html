@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<ul id="displayList">
+	<li>6</li>
+	<li>7</li>
+	<li>8</li>
+	<li>9</li>
+	<li>10</li>
+</ul>
+<br>
+<ul id="insertBeforeList">
+	<li>1</li>
+	<li>2</li>
+	<li>3</li>
+	<li>4</li>
+	<li>5</li>
+</ul>
+<script>
+
+let array1 = [1, 2, 3, 4, 5];
+let array2 = [6, 7 ,8 ,9 ,10];
+
+let finalArray = [...array1, ...array2];
+console.log(finalArray);
+
+let insertBeforeList = Array.from(document.getElementById("insertBeforeList").children);
+let displayList = document.getElementById("displayList");
+
+insertBeforeList.reverse()
+
+insertBeforeList.forEach((item) => {
+	displayList.insertBefore(item, displayList.children[0]);
+});
+
+</script>
+</html>
