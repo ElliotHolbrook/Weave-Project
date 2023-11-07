@@ -94,9 +94,19 @@
             $returnData = [];
             foreach($channelIds as $channelId) {
                 $channelData = DBConnection::read("SELECT participants, channelName FROM channel_data WHERE id = :channelId", [$channelId], [":channelId"]);
-                array_push($returnData, array("channelId"=>$channelId, "channelName"=>$channelData[0]["channelName"], "participants"=>$channelData[0]["participants"]));
+                if ($channelData !== false) {
+                    array_push($returnData, array("channelId"=>$channelId, "channelName"=>$channelData["channelName"], "participants"=>$channelData["participants"]));
+                }
             }
+            //print_r($returnData);
+            return $returnData;
         }
+
+        // public static function getGroupChatNameById($id) {
+        //     $data = DBConnection::read("SELECT channelName FROM channel_data WHERE id = :id", [$id], [":id"]);
+        //     if ($data === False) {return False;};
+        //     return $data[0];
+        // }
 
         public static function getMessagesByChannelId($channelId, $startIndex, $endIndex) {
             $sql = "SELECT id, senderId, textContent, dateTimeSent 

@@ -8,12 +8,26 @@
     }
 
     $dms = ChatInteractions::getDMsById($_SESSION["account"]->getId());
+	$gcs = ChatInteractions::getGroupChatsById($_SESSION["account"]->getId());
+
+	$friends = AccountInteractions::getFriendsById($_SESSION["account"]);
 ?>
 <!DOCTYPE html>
 <html>
+<header>
+	<datalist id="friendsDatalist">
+		<?php
+		foreach($friends as $friend) {
+			//$friendAccount
+		}
+		?>
+	</datalist>
+</header>
+
+<body>
     <h1>Home</h1><br>
     <h3>Chats</h3>
-    <select name="friend" id="friend" oninput="changeChatRecipient(this)">
+    <select name="friend" id="friend" oninput="changeChatRecipient(this)" style="max-width: 500px">
         <?php
             foreach($dms as $dm) {
                 $friendAccount = AccountInteractions::getAccountById($dm["buddyId"]);
@@ -25,8 +39,30 @@
 				//     AccountInteractions::removeFriendById($friendId, $_SESSION["account"]->getId());
 				// }
             }
+			foreach($gcs as $gc) {
+                echo "<option data-channelId='" . $gc["channelId"] . "'>Group Chat - " . $gc["channelName"] . "</option>";
+			}
         ?>
     </select>
+	
+	<p onclick="toggleGroupChatCreator()" id="groupChatCreatorToggler">Create Group Chat</p>
+	<div id="groupChatCreatorContainer" style="display: none; min-height: 300px"><h3>Create Group Chat</h3>
+		<form id="groupChatCreatorForm" style="margin-top: 10px;display: grid; column-gap: 10px; max-width: 500px; grid-template-columns: 50% 50%;">
+			<label>Add Friends: </label>
+			<div style="grid-column: 1; display: grid">
+				<input type="text" style="grid-column: 1; display:inline;" id="groupChatCreatorUserInput" autocomplete="off"></input><input type="button" style="display:inline ;grid-column: 2;" value="+" onclick="addUserToGCMakerUserList()"></input>
+			</div>
+			<ul id="groupChatCreatorUserDisplayList" style="height: 70px; grid-column: 1; max-height: 100px; overflow-y: scroll">
+			</ul>
+
+			<label style="grid-column: 2; grid-row: 1">Name: </label>
+			<input id="groupChatCreatorNameInput" style="grid-column: 2; grid-row: 2" type="text"></input>
+			<div style="display: grid">
+				<input type="button" style="grid-column: 1; width: 50%; position: relative; left: 70%; top: 50%; transform: translate(-50%, -50%); height: 30px" value="Cancel" onclick="toggleGroupChatCreator('cancel')"></input>
+				<button style="grid-column: 2; width: 50%; position: relative; left: 30%; top: 50%; transform: translate(-50%, -50%); height: 30px" onclick="submitGroupChatCreatorForm()">Create</button>
+			</div>
+	</form></div>
+
 	<div><ul id="messages" style="background-color: rgb(230, 230, 230); overflow-y: scroll; max-height: 300px; min-height: 300px; width: 500px; overflow-x: hidden; word-wrap: break-word; maxlength: 4000">
 		</ul>
 		<label for="messageBox">Message:</label>
@@ -51,7 +87,7 @@
     <form action="../controller/logOut.php" method="get">
         <button type="submit">Log Out</button>
     </form>
-
+</body>
     <script src="startup.js"></script>
     <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" 
 			integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" 
@@ -74,7 +110,7 @@
 		
 		
 		console.log(io);
-		const socket = io("http://localhost:8000/");
+		const socket = io("http://localhost:8000");
 		console.log(socket);
 		
 
@@ -132,14 +168,14 @@
 					}
 				})
 			} else {
-				let newMessage = document.createElement("Li");
-				newMessage.innerHTML = data["textContent"];
+				formatMessage(data).then((newMessage)=>{
 				if(savedMessages[data["channelId"]] !== undefined) {
 					console.log(savedMessages[data["channelId"]]);
 					savedMessages[data["channelId"]].push(newMessage);
 				} else {
 					savedMessages[data["channelId"]] = [newMessage];
 				}
+				})
 			}
 		});
 
@@ -239,6 +275,57 @@
 		// 	loadPending = true;
 		// 	console.log(messages.scrollTop);
 		// }
+
+		gcMakerContainer = document.getElementById("groupChatCreatorContainer");
+		gcMakerForm = document.getElementById("groupChatCreatorForm");
+		toggler = document.getElementById("groupChatCreatorToggler");
+
+		gcMakerNameInput = document.getElementById("groupChatCreatorNameInput");
+		gcMakerUserInput = document.getElementById("groupChatCreatorUserInput");
+
+		gcMakerUserList = [];
+		gcMakerUserDisplayList = document.getElementById("groupChatCreatorUserDisplayList");
+		
+		gcMakerShown = false;
+		function toggleGroupChatCreator(type) {
+			if(gcMakerShown) {
+				gcMakerShown = false;
+				gcMakerContainer.style.display = "none";
+				toggler.innerHTML = "Create Group Chat";
+			} else {
+				gcMakerShown = true;
+				gcMakerContainer.style.display = "inline";
+				toggler.innerHTML = "^Back^";
+			}
+
+			if(type == "cancel") {
+				gcMakerNameInput.value = "";
+				gcMakerUserInput.value = "";
+				gcMakerUserDisplayList.innerHTML = "";
+				gcMakerUserList = [];
+			}
+		}
+		
+		gcMakerUserInput.addEventListener("keypress", (event) => {
+			if(event.key == "Enter") {
+				event.preventDefault();
+				addUserToGCMakerUserList();
+			}
+		})
+
+		function addUserToGCMakerUserList() {
+			if(gcMakerUserInput.value != "") {
+				element = document.createElement("Li");
+				element.innerHTML = gcMakerUserInput.value;
+				
+				gcMakerUserDisplayList.insertBefore(element, gcMakerUserDisplayList.children[0]);
+				gcMakerUserInput.value = "";
+			}
+		}
+
+		function submitGroupChatCreatorForm() {
+			
+		}
 	</script>
 </html>
 </html>

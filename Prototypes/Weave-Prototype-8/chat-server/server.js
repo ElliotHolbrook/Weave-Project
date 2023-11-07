@@ -8,7 +8,7 @@ server = http.createServer((req, res)=>{
 
 const io = socketio(server, {
     cors: {                                 //socket io server to handle ws connections
-      origin: 'http://localhost'}  
+      origin: 'http://weave.kayakraft.net'}  
     });
 
 var mysql = require('mysql2');

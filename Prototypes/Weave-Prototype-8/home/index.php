@@ -74,7 +74,7 @@
 		
 		
 		console.log(io);
-		const socket = io("http://localhost:8000/");
+		const socket = io("http://weave.kayakraft.net:8000/");
 		console.log(socket);
 		
 
@@ -132,14 +132,14 @@
 					}
 				})
 			} else {
-				let newMessage = document.createElement("Li");
-				newMessage.innerHTML = data["textContent"];
+				formatMessage(data).then((newMessage)=>{
 				if(savedMessages[data["channelId"]] !== undefined) {
 					console.log(savedMessages[data["channelId"]]);
 					savedMessages[data["channelId"]].push(newMessage);
 				} else {
 					savedMessages[data["channelId"]] = [newMessage];
 				}
+				})
 			}
 		});
 
