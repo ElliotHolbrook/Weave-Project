@@ -10,7 +10,7 @@
     $dms = ChatInteractions::getDMsById($_SESSION["account"]->getId());
 	$gcs = ChatInteractions::getGroupChatsById($_SESSION["account"]->getId());
 
-	$friends = AccountInteractions::getFriendsById($_SESSION["account"]);
+	$friends = AccountInteractions::getFriendsById($_SESSION["account"]->getId());
 ?>
 <!DOCTYPE html>
 <html>
@@ -18,8 +18,11 @@
 	<datalist id="friendsDatalist">
 		<?php
 		foreach($friends as $friend) {
-			//$friendAccount
-		}
+			$friendAccount = AccountInteractions::getAccountById($friend);
+			$tag = $friendAccount->getTag();
+			$username = $friendAccount->getUsername();
+			echo "<option>$username#$tag</option>";
+		};
 		?>
 	</datalist>
 </header>
@@ -50,7 +53,7 @@
 		<form id="groupChatCreatorForm" style="margin-top: 10px;display: grid; column-gap: 10px; max-width: 500px; grid-template-columns: 50% 50%;">
 			<label>Add Friends: </label>
 			<div style="grid-column: 1; display: grid">
-				<input type="text" style="grid-column: 1; display:inline;" id="groupChatCreatorUserInput" autocomplete="off"></input><input type="button" style="display:inline ;grid-column: 2;" value="+" onclick="addUserToGCMakerUserList()"></input>
+				<input type="text" style="grid-column: 1; display:inline;" id="groupChatCreatorUserInput" list="friendsDatalist" autocomplete="off"></input><input type="button" style="display:inline ;grid-column: 2;" value="+" onclick="addUserToGCMakerUserList()"></input>
 			</div>
 			<ul id="groupChatCreatorUserDisplayList" style="height: 70px; grid-column: 1; max-height: 100px; overflow-y: scroll">
 			</ul>
@@ -285,6 +288,9 @@
 
 		gcMakerUserList = [];
 		gcMakerUserDisplayList = document.getElementById("groupChatCreatorUserDisplayList");
+
+		acceptableFriendsList = [];
+		Array.from(document.getElementById("friendsDatalist").options).forEach((option) => {acceptableFriendsList.push(option.value)});
 		
 		gcMakerShown = false;
 		function toggleGroupChatCreator(type) {
