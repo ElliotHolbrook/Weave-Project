@@ -121,4 +121,23 @@
             
             return $data;
         }
+
+        public static function addGroupChatToAccountById($userId, $channelId) {
+            $data = DBConnection::read("SELECT groupChats FROM account_data WHERE id = :id", [$userId], ["id"]);
+            $groupChats = json_decode($data[0]);
+            array_push($groupChats, $channelId);
+            $groupChatsEncoded = json_encode($groupChats);
+            DBConnection::update("UPDATE account_data SET groupChats = :groupChats WHERE id = :id", [$groupChatsEncoded, $userId], [":groupChats", ":id"]);
+        }
+
+        public static function createGroupChat($participants, $name) {
+            $id = ChatInteractions::generateChannelId();
+            $encodedParticipants = json_encode($participants);
+            DBConnection::create("INSERT INTO channel_data (id, participants, channelType, channelName) VALUES (:id, :participants, :channelType, :channelName)",
+                                    [$id, $encodedParticipants, 1, $name],
+                                    [":id", ":participants", ":channelType", ":channelName"]
+            );
+            foreach($participants as $participantId)
+                ChatInteractions::addGroupChatToAccountById($participantId, $id);
+        }
     }

@@ -19,9 +19,11 @@
 		<?php
 		foreach($friends as $friend) {
 			$friendAccount = AccountInteractions::getAccountById($friend);
-			$tag = $friendAccount->getTag();
-			$username = $friendAccount->getUsername();
-			echo "<option>$username#$tag</option>";
+			if($friendAccount !== False) {	
+				$tag = $friendAccount->getTag();
+				$username = $friendAccount->getUsername();
+				echo "<option>$username#$tag</option>";
+			}
 		};
 		?>
 	</datalist>
@@ -59,15 +61,24 @@
 			</ul>
 
 			<label style="grid-column: 2; grid-row: 1">Name: </label>
-			<input id="groupChatCreatorNameInput" style="grid-column: 2; grid-row: 2" type="text"></input>
+			<input id="groupChatCreatorNameInput" style="grid-column: 2; grid-row: 2" type="text" autocomplete="off"></input>
 			<div style="display: grid">
 				<input type="button" style="grid-column: 1; width: 50%; position: relative; left: 70%; top: 50%; transform: translate(-50%, -50%); height: 30px" value="Cancel" onclick="toggleGroupChatCreator('cancel')"></input>
 				<button style="grid-column: 2; width: 50%; position: relative; left: 30%; top: 50%; transform: translate(-50%, -50%); height: 30px" onclick="submitGroupChatCreatorForm()">Create</button>
 			</div>
 	</form></div>
 
-	<div><ul id="messages" style="background-color: rgb(230, 230, 230); overflow-y: scroll; max-height: 300px; min-height: 300px; width: 500px; overflow-x: hidden; word-wrap: break-word; maxlength: 4000">
+	<div><div style="display: grid"><ul id="messages" style="background-color: rgb(230, 230, 230); grid-column: 1; overflow-y: scroll; max-height: 300px; min-height: 300px; width: 500px; overflow-x: hidden; word-wrap: break-word; maxlength: 4000">
 		</ul>
+		<ul style="background-color: rgb(230, 230, 230); grid-column: 2">
+			<li>Name</li>
+			<li>Name</li>
+			<li>Name</li>
+			<li>Name</li>
+			<li>Name</li>
+			<li>Name</li>
+			<li>Name</li>
+		</ul></div>
 		<label for="messageBox">Message:</label>
 		<input id="messageBox" type="text" autocomplete="off"></input>
 		<input id="sendButton" type="button" onclick="sendMessage()" value="Send"></input>
@@ -321,16 +332,28 @@
 
 		function addUserToGCMakerUserList() {
 			if(gcMakerUserInput.value != "") {
+				let val = gcMakerUserInput.value;
+				if(!acceptableFriendsList.includes(val)) {
+					gcMakerUserInput.value = "";
+					gcMakerUserInput.placeholder = "Input a Friend's Name"
+					return; 
+				}
 				element = document.createElement("Li");
-				element.innerHTML = gcMakerUserInput.value;
+				element.innerHTML = val;
 				
 				gcMakerUserDisplayList.insertBefore(element, gcMakerUserDisplayList.children[0]);
 				gcMakerUserInput.value = "";
+
+				gcMakerUserList.push(val);
 			}
 		}
 
 		function submitGroupChatCreatorForm() {
-			
+			gcMakerUserList.push("<?php echo $_SESSION["account"]->getUsername() . "#" . $_SESSION["account"]->getTag();?>");
+			const xhttp = new XMLHttpRequest();             //sending the AJAX request to get messages from the server
+			xhttp.onload = function() {}
+			xhttp.open("GET", "newGC.php?participants=" + encodeURIComponent(JSON.stringify(gcMakerUserList)) + "&name=" + encodeURIComponent(gcMakerNameInput.value));       
+			xhttp.send(); 
 		}
 	</script>
 </html>
