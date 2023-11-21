@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="pageDefaults.css">
+    <link rel="stylesheet" href="defaultAssets.css">
+
+    <style media="screen">
+
+    </style>
+  </head>
+  <body>
+    <div class="" style="height: 250px;">
+      <h1 class="centerInContainer title">Welcome to Weave</h1>
+    </div>
+
+    <div class="" style="height: calc(100dvh - 250px); min-height: 400px">
+      <div class="centerInContainer boxContainer" style="height: 450px; width: 400px; columns: auto 1;">
+        <h2 class="centerInContainer heading" style="grid-area: 1 / 1">Log In</h2>
+        <input id="emailInputBox" class="logInInput centerInContainer" style="grid-area: 2 / 1" type="email" name="email" value="">
+          <span id="emailInputBoxLabel" class="centerInContainer logInInputLabel" style="grid-area: 2 / 1"><span style="padding: 3px">Email</span></span>
+        <input id="passwordInputBox" class="logInInput centerInContainer" type="password" name="password" style="grid-area: 3 / 1" value="">
+          <span id="passwordInputBoxLabel" class="centerInContainer logInInputLabel" style="grid-area: 3 / 1"><span style="padding: 3px">Password</span></span>
+        <span class="centerInContainer" style="grid-area: 4 / 1">No account? <a href="somewhere">Register Here</a></span>
+      </div>
+    </div>
+  </body>
+
+  <script type="text/javascript">
+    // emailInputBox = document.getElementById("emailInputBox");
+    // passwordInputBox = document.getElementById("passwordInputBox");
+    //
+    // emailInputBoxLabel = document.getElementById("emailInputBoxLabel");
+    // passwordInputBoxLabel = document.getElementById("passwordInputBoxLabel");
+    //
+    // function emailInputBoxOnFocusOut(event) {
+    //   let emailStyles = window.getComputedStyle(emailInputBoxLabel);
+    //   let emailTransform = emailStyles.getPropertyValue("transform");
+    //   let emailBackground = emailStyles.getPropertyValue("background-color");
+    //   let emailFontSize = emailStyles.getPropertyValue("font-size");
+    //   if(emailInputBox.value !== "") {
+    //     emailInputBoxLabel.style.transform = emailTransform;
+    //     emailInputBoxLabel.style.backgroundColor = emailBackground;
+    //     emailInputBoxLabel.style.fontSize = emailFontSize;
+    //   } else {
+    //     emailInputBoxLabel.style.transform = "";
+    //     emailInputBoxLabel.style.backgroundColor = "";
+    //     emailInputBoxLabel.style.fontSize = "25px";
+    //   }
+    // }
+    //
+    // function passwordInputBoxOnFocusOut(event) {
+    //   let passwordStyles = window.getComputedStyle(passwordInputBoxLabel);
+    //   let passwordTransform = passwordStyles.getPropertyValue("transform");
+    //   let passwordBackground = passwordStyles.getPropertyValue("background-color");
+    //   let passwordFontSize = passwordStyles.getPropertyValue("font-size");
+    //   if(passwordInputBox.value !== "") {
+    //     passwordInputBoxLabel.style.transform = passwordTransform;
+    //     passwordInputBoxLabel.style.backgroundColor = passwordBackground;
+    //     passwordInputBoxLabel.style.fontSize = passwordFontSize;
+    //   } else {
+    //     passwordInputBoxLabel.style.transform = "";
+    //     passwordInputBoxLabel.style.backgroundColor = "";
+    //     passwordInputBoxLabel.style.fontSize = "25px";
+    //   }
+    // }
+    //
+    // emailInputBox.addEventListener("focusout", emailInputBoxOnFocusOut);
+    // passwordInputBox.addEventListener("focusout", passwordInputBoxOnFocusOut);
+
+    emailInputBox = document.getElementById("emailInputBox");
+    passwordInputBox = document.getElementById("passwordInputBox");
+
+
+
+    function inputBoxOnFocusOut(event) {
+      let label = document.getElementById(event.srcElement.id + "Label");
+      let styles = window.getComputedStyle(label);
+      let transform = styles.getPropertyValue("transform");
+      let background = styles.getPropertyValue("background-color");
+      let fontSize = styles.getPropertyValue("font-size");
+      if(event.srcElement.value !== "") {
+        label.style.transform = transform;
+        label.style.backgroundColor = background;
+        label.style.fontSize = fontSize;
+      } else {
+        label.style.transform = "";
+        label.style.backgroundColor = "";
+        label.style.fontSize = "25px";
+      }
+    }
+
+    emailInputBox.addEventListener("focusout", inputBoxOnFocusOut);
+    passwordInputBox.addEventListener("focusout", inputBoxOnFocusOut);
+
+  </script>
+</html>

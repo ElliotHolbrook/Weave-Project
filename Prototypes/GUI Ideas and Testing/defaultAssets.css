@@ -25,6 +25,8 @@
   height: 50px !important;
   font-family: font2;
   font-size: 25px;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .logInInputLabel {
@@ -62,4 +64,12 @@
   transform: translate(-50%, -50%);
   width: fit-content;
   height: fit-content;
+}
+
+.homePageContainer {
+  height: 80dvh;
+  width: 80dvw;
+  grid-template-columns: clamp(200px, 25%, 300px) clamp(300px, 75%, auto);
+  grid-template-rows: auto auto;
+
 }

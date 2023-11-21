@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="pageDefaults.css">
+    <link rel="stylesheet" href="defaultAssets.css">
+
+    <style media="screen">
+
+    </style>
+  </head>
+  <body>
+    <div class="" style="height: 250px;">
+      <h1 class="centerInContainer title">Register an Account</h1>
+    </div>
+
+    <div class="" style="height: calc(100dvh - 250px); min-height: 600px">
+      <div class="centerInContainer boxContainer" style="height: 600px; width: 400px; columns: auto 1;">
+        <h2 class="centerInContainer heading" style="grid-area: 1 / 1">Register</h2>
+        <!-- USERNAME INPUT -->
+        <input id="usernameInputBox" class="logInInput centerInContainer" style="grid-area: 2 / 1" type="email" name="email" value="">
+          <span id="usernameInputBoxLabel" class="centerInContainer logInInputLabel" style="grid-area: 2 / 1"><span style="padding: 3px">Username</span></span>
+
+        <!-- EMAIL INPUT -->
+        <input id="emailInputBox" class="logInInput centerInContainer" style="grid-area: 3 / 1" type="email" name="email" value="">
+          <span id="emailInputBoxLabel" class="centerInContainer logInInputLabel" style="grid-area: 3 / 1"><span style="padding: 3px">Email</span></span>
+
+        <!-- PASSWORD INPUT -->
+        <input id="passwordInputBox" class="logInInput centerInContainer" type="password" name="password" style="grid-area: 4 / 1" value="">
+          <span id="passwordInputBoxLabel" class="centerInContainer logInInputLabel" style="grid-area: 4 / 1"><span style="padding: 3px">Password</span></span>
+
+        <!-- PASSWORD REPEAT INPUT -->
+        <input id="passwordRepeatInputBox" class="logInInput centerInContainer" type="password" name="password" style="grid-area: 5 / 1" value="">
+          <span id="passwordRepeatInputBoxLabel" class="centerInContainer logInInputLabel" style="grid-area: 5 / 1"><span style="padding: 3px">Password Repeat</span></span>
+
+        <!-- PIN INPUT -->
+        <input id="pinInputBox" class="logInInput centerInContainer" type="password" name="password" style="grid-area: 6 / 1" value="">
+          <span id="pinInputBoxLabel" class="centerInContainer logInInputLabel" style="grid-area: 6 / 1"><span style="padding: 3px">Pin</span></span>
+
+        <!-- Already have an account -->
+        <span class="centerInContainer" style="grid-area: 7 / 1">Already have an Account? <a href="somewhere">Log In Here</a></span>
+      </div>
+    </div>
+  </body>
+
+  <script type="text/javascript">
+    usernameInputBox = document.getElementById("usernameInputBox");
+    emailInputBox = document.getElementById("emailInputBox");
+    passwordInputBox = document.getElementById("passwordInputBox");
+    passwordRepeatInputBox = document.getElementById("passwordRepeatInputBox");
+    pinInputBox = document.getElementById("pinInputBox")
+
+
+
+    function inputBoxOnFocusOut(event) {
+      let label = document.getElementById(event.srcElement.id + "Label");
+      let styles = window.getComputedStyle(label);
+      let transform = styles.getPropertyValue("transform");
+      let background = styles.getPropertyValue("background-color");
+      let fontSize = styles.getPropertyValue("font-size");
+      if(event.srcElement.value !== "") {
+        label.style.transform = transform;
+        label.style.backgroundColor = background;
+        label.style.fontSize = fontSize;
+      } else {
+        label.style.transform = "";
+        label.style.backgroundColor = "";
+        label.style.fontSize = "25px";
+      }
+    }
+
+    usernameInputBox.addEventListener("focusout", inputBoxOnFocusOut);
+    emailInputBox.addEventListener("focusout", inputBoxOnFocusOut);
+    passwordInputBox.addEventListener("focusout", inputBoxOnFocusOut);
+    passwordRepeatInputBox.addEventListener("focusout", inputBoxOnFocusOut);
+    pinInputBox.addEventListener("focusout", inputBoxOnFocusOut);
+
+  </script>
+</html>
