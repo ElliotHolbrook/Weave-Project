@@ -49,11 +49,11 @@
     }
 
     function passwordInputBoxOnFocusOut(event) {
+      let passwordStyles = window.getComputedStyle(passwordInputBoxLabel);
+      let passwordTransform = passwordStyles.getPropertyValue("transform");
+      let passwordBackground = passwordStyles.getPropertyValue("background-color");
+      let passwordFontSize = passwordStyles.getPropertyValue("font-size");
       if(passwordInputBox.value !== "") {
-        let passwordStyles = window.getComputedStyle(passwordInputBoxLabel);
-        let passwordTransform = passwordStyles.getPropertyValue("transform");
-        let passwordBackground = passwordStyles.getPropertyValue("background-color");
-        let passwordFontSize = passwordStyles.getPropertyValue("font-size");
         passwordInputBoxLabel.style.transform = passwordTransform;
         passwordInputBoxLabel.style.backgroundColor = passwordBackground;
         passwordInputBoxLabel.style.fontSize = passwordFontSize;
