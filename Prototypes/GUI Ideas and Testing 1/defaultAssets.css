@@ -69,7 +69,7 @@
 .homePageContainer {
   height: 80dvh;
   width: 80dvw;
-  grid-template-columns: clamp(200px, 25%, 300px) clamp(300px, 75%, auto);
+  grid-template-columns: 200px calc(100% - 400px) 200px;
   grid-template-rows: auto auto;
-
+  min-width: 600px;
 }

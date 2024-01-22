@@ -1,0 +1,75 @@
+@import "reset.css";
+@import "colours.css";
+@import "fonts.css";
+
+.title {
+  /*background-color: var(--background2);*/
+  color: var(--highlight);
+  font-family: font3;
+  font-size: 100px;
+  user-select: none;
+}
+
+.heading {
+  color: var(--highlight);
+  font-family: font2;
+  font-size: 40px;
+  user-select: none;
+}
+
+.logInInput {
+  width: 260px !important;
+  background-color: var(--background);
+  border-color: var(--highlight);
+  border-radius: 5px;
+  height: 50px !important;
+  font-family: font2;
+  font-size: 25px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.logInInputLabel {
+  transition-duration: 0.5s;
+  user-select: none;
+  pointer-events: none;
+  border-radius: 3px;
+  font-family: font2;
+  font-size: 25px;
+}
+
+.logInInput:focus + .logInInputLabel {
+  transform: translate(-90px, -35px);
+  background-color: white;
+  font-size: 15px !important;
+}
+
+.boxContainer {
+  border-radius: 30px;
+  margin: 15px;
+  /*background-image: linear-gradient(225deg, var(--border), var(--background));*/
+  background-color: var(--boxBackground);
+  display: grid;
+}
+
+.invisibleContainer {
+  width: fit-content;
+  height: auto;
+}
+
+.centerInContainer {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: fit-content;
+  height: fit-content;
+}
+
+.homePageContainer {
+  height: 80dvh;
+  width: 80dvw;
+  grid-template-columns: 200px calc(100% - 400px) 200px;
+  grid-template-rows: auto auto;
+  min-width: 600px;
+}

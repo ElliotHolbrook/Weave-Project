@@ -81,6 +81,7 @@
         public static function delete($sql) {
             //Protecting against deleting all records
             $sql = $sql . " LIMIT 1";
+            echo $sql;
             $stmt = self::dbConnect()->prepare($sql);
             //Preventing unspecified deletions
             if (str_contains($sql, "WHERE")) {

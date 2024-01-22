@@ -1,0 +1,24 @@
+@font-face {
+  font-family: font1;
+  src: url(fonts/Gaby-Demo.ttf);
+}
+
+@font-face {
+  font-family: font2;
+  src: url(fonts/libel-suit-rg.otf);
+}
+
+@font-face {
+  font-family: font3;
+  src: url(fonts/ThirstyScriptExtraBoldDemo.otf);
+}
+
+@font-face {
+  font-family: font4;
+  src: url(fonts/Coco-Gothic-Regular-trial.ttf);
+}
+
+@font-face {
+  font-family: font5;
+  src: url(fonts/FrancoisOne-Regular.ttf);
+}

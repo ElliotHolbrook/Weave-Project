@@ -131,13 +131,13 @@
         }
 
         public static function createGroupChat($participants, $name) {
-            $id = ChatInteractions::generateChannelId();
-            $encodedParticipants = json_encode($participants);
+            $id = ChatInteractions::generateChannelId();                    //generate an ID
+            $encodedParticipants = json_encode($participants);              //encode participants list for DB
             DBConnection::create("INSERT INTO channel_data (id, participants, channelType, channelName) VALUES (:id, :participants, :channelType, :channelName)",
                                     [$id, $encodedParticipants, 1, $name],
-                                    [":id", ":participants", ":channelType", ":channelName"]
+                                    [":id", ":participants", ":channelType", ":channelName"]            //Insert values into DB
             );
             foreach($participants as $participantId)
-                ChatInteractions::addGroupChatToAccountById($participantId, $id);
-        }
+                ChatInteractions::addGroupChatToAccountById($participantId, $id);           //add GC to all accounts in participant list
+            }
     }

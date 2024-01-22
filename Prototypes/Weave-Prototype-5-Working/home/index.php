@@ -118,7 +118,7 @@
         var channelId = "<?php echo $dms[0]["channelId"] ?>";			//default to 1st DM channel
 		savedMessages = {};												//set saved messages to {} on page load
         function changeChatRecipient(selecter) {						//run when the selecter switches to a new channel
-            savedMessages[channelId] = [...messageContainer.children];								//save all currently displayed messages to the location of the current channel ID 
+            savedMessages[channelId] = [...messageContainer.children];			//save all currently displayed messages to the location of the current channel ID 
 			
 			channelId = selecter.options[selecter.selectedIndex].getAttribute('data-channelId');	//get the channel ID that is to be switched to
 			

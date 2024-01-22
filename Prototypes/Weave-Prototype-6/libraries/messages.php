@@ -75,7 +75,7 @@
         }
 
         public static function getMessagesByChannelId($channelId, $startIndex, $endIndex) {
-            $sql = "SELECT id, senderId, textContent, dateTimeSent 
+            $sql = "SELECT id, senderId, textContent, dateTimeSent      
             FROM messages
             WHERE channelId = '$channelId' 
             ORDER BY dateTimeSent DESC 

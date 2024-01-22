@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="pageDefaults.css">
+    <link rel="stylesheet" href="defaultAssets.css">
+    <script src="https://kit.fontawesome.com/82bbd236d5.js" crossorigin="anonymous"></script>
+
+    <style media="screen">
+      .homeProfileBox {
+        border-bottom: 3px solid var(--boxDivider);
+        border-right: 6px double var(--boxDivider);
+        height: 200px;
+      }
+
+      .channelListContainer {
+        height: calc(100% - 200px);
+        border-right: 6px double var(--boxDivider);
+        min-height: 20px;
+        overflow-y: scroll;
+        border-bottom-left-radius: 32px;
+      }
+
+      .participantsColumn {
+        height: 100%;
+        border-left: 6px double var(--boxDivider);
+      }
+
+      .columnHeading {
+        font-size: 20px;
+        font-family: font2;
+        border-bottom: 3px solid var(--boxDivider);
+        height: 40px;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 20px calc(100% - 20px);
+        width: 100%;
+      }
+
+      .channelList {
+        list-style: none;
+        padding-left: 5px;
+        padding-bottom: 5px;
+      }
+
+      .channelOption {
+        background-color: var(--background2);
+        margin-top: 3px;
+        font-family: font5;
+      }
+
+      .channelOption:focus {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="boxContainer centerInContainer homePageContainer" style="">
+      <div class="" style="grid-area: 1 / 1 / 2 / 1; min-height: 80dvh; min-width: 200px">
+        <div class="homeProfileBox">
+
+        </div>
+        <div class="channelListContainer">
+          <ul class="channelList">
+            <li class="channelOption">
+              <div class="">
+                <span>TestingUsername123#12345</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="" style="grid-area: 1 / 2 / 2 / 2; min-height: 80dvh">
+        <div class="columnHeading" style="">
+          <i class="fa-solid fa-user centerInContainer" style="margin-left: 3px"></i>
+          <i class="fa-solid fa-users centerInContainer" style="margin-left: 5px; display: none"></i>
+          <h2 style="margin-left: 8px; transform: translate(0px, -2px);">TestingUsername123</h2>
+        </div>
+      </div>
+
+      <div class="participantsColumn">
+        <div class="columnHeading" style="">
+          <h2 class="" style="width: 200px; margin-left: 3px; transform: translate(0px, -2px);">Participants</h2>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

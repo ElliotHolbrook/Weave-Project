@@ -27,7 +27,45 @@
 		};
 		?>
 	</datalist>
-</header>
+
+	<style>
+		.groupChatForm {
+			margin-top: 10px;
+			display: grid;
+			column-gap: 10px; 
+			max-width: 500px; 
+			grid-template-columns: 50% 50%;
+		}
+
+		.gccudl {
+			height: 70px; 
+			grid-column: 1; 
+			max-height: 100px; 
+			overflow-y: scroll;
+		}
+
+		.cancelGCCreator {
+			grid-column: 1; 
+			width: 50%; 
+			position: relative; 
+			left: 70%; 
+			top: 50%; 
+			transform: translate(-50%, -50%); 
+			height: 30px;
+		}
+
+		.submitGCCreator {
+			grid-column: 2; 
+			width: 50%; 
+			position: relative; 
+			left: 30%; 
+			top: 50%; 
+			transform: translate(-50%, -50%); 
+			height: 30px;
+		}
+	</style>
+
+</header> 
 
 <body>
     <h1>Home</h1><br>
@@ -52,19 +90,20 @@
 	
 	<p onclick="toggleGroupChatCreator()" id="groupChatCreatorToggler">Create Group Chat</p>
 	<div id="groupChatCreatorContainer" style="display: none; min-height: 300px"><h3>Create Group Chat</h3>
-		<form id="groupChatCreatorForm" style="margin-top: 10px;display: grid; column-gap: 10px; max-width: 500px; grid-template-columns: 50% 50%;">
+		<form id="groupChatCreatorForm" class="groupChatForm" style="">
 			<label>Add Friends: </label>
 			<div style="grid-column: 1; display: grid">
-				<input type="text" style="grid-column: 1; display:inline;" id="groupChatCreatorUserInput" list="friendsDatalist" autocomplete="off"></input><input type="button" style="display:inline ;grid-column: 2;" value="+" onclick="addUserToGCMakerUserList()"></input>
+				<input type="text" style="grid-column: 1; display:inline;" id="groupChatCreatorUserInput" list="friendsDatalist" autocomplete="off"></input>
+				<input type="button" style="display:inline ;grid-column: 2;" value="+" onclick="addUserToGCMakerUserList()"></input>
 			</div>
-			<ul id="groupChatCreatorUserDisplayList" style="height: 70px; grid-column: 1; max-height: 100px; overflow-y: scroll">
+			<ul id="groupChatCreatorUserDisplayList" class="gccudl" style="">
 			</ul>
 
 			<label style="grid-column: 2; grid-row: 1">Name: </label>
 			<input id="groupChatCreatorNameInput" style="grid-column: 2; grid-row: 2" type="text" autocomplete="off"></input>
 			<div style="display: grid">
-				<input type="button" style="grid-column: 1; width: 50%; position: relative; left: 70%; top: 50%; transform: translate(-50%, -50%); height: 30px" value="Cancel" onclick="toggleGroupChatCreator('cancel')"></input>
-				<button style="grid-column: 2; width: 50%; position: relative; left: 30%; top: 50%; transform: translate(-50%, -50%); height: 30px" onclick="submitGroupChatCreatorForm()">Create</button>
+				<input type="button" style="" class="cancelGCCreator" value="Cancel" onclick="toggleGroupChatCreator('cancel')"></input>
+				<button class="submitGCCreator" style="" onclick="submitGroupChatCreatorForm()">Create</button>
 			</div>
 	</form></div>
 
@@ -306,16 +345,16 @@
 		gcMakerShown = false;
 		function toggleGroupChatCreator(type) {
 			if(gcMakerShown) {
-				gcMakerShown = false;
-				gcMakerContainer.style.display = "none";
+				gcMakerShown = false;						//gc maker was visible
+				gcMakerContainer.style.display = "none";	//now hidden
 				toggler.innerHTML = "Create Group Chat";
 			} else {
-				gcMakerShown = true;
-				gcMakerContainer.style.display = "inline";
+				gcMakerShown = true;						//GC maker was hidden
+				gcMakerContainer.style.display = "inline";	//now visible
 				toggler.innerHTML = "^Back^";
 			}
 
-			if(type == "cancel") {
+			if(type == "cancel") {							//cancel button clears the form
 				gcMakerNameInput.value = "";
 				gcMakerUserInput.value = "";
 				gcMakerUserDisplayList.innerHTML = "";
@@ -323,7 +362,7 @@
 			}
 		}
 		
-		gcMakerUserInput.addEventListener("keypress", (event) => {
+		gcMakerUserInput.addEventListener("keypress", (event) => {	//allow using enter key to input names
 			if(event.key == "Enter") {
 				event.preventDefault();
 				addUserToGCMakerUserList();
@@ -331,17 +370,17 @@
 		})
 
 		function addUserToGCMakerUserList() {
-			if(gcMakerUserInput.value != "") {
-				let val = gcMakerUserInput.value;
-				if(!acceptableFriendsList.includes(val)) {
+			if(gcMakerUserInput.value != "") {					//cheack if input empty
+				let val = gcMakerUserInput.value;				//get inputted value
+				if(!acceptableFriendsList.includes(val)) {						//if value not acceptable then display placeholder
 					gcMakerUserInput.value = "";
 					gcMakerUserInput.placeholder = "Input a Friend's Name"
 					return; 
 				}
-				element = document.createElement("Li");
+				element = document.createElement("Li");		//create element
 				element.innerHTML = val;
 				
-				gcMakerUserDisplayList.insertBefore(element, gcMakerUserDisplayList.children[0]);
+				gcMakerUserDisplayList.insertBefore(element, gcMakerUserDisplayList.children[0]);	//add to top of list
 				gcMakerUserInput.value = "";
 
 				gcMakerUserList.push(val);
@@ -349,9 +388,8 @@
 		}
 
 		function submitGroupChatCreatorForm() {
-			gcMakerUserList.push("<?php echo $_SESSION["account"]->getUsername() . "#" . $_SESSION["account"]->getTag();?>");
-			const xhttp = new XMLHttpRequest();             //sending the AJAX request to get messages from the server
-			xhttp.onload = function() {}
+			gcMakerUserList.push("<?php echo $_SESSION["account"]->getUsername() . "#" . $_SESSION["account"]->getTag();?>"); 	//add the user to their own group chat
+			const xhttp = new XMLHttpRequest();			//send GET request with the data
 			xhttp.open("GET", "newGC.php?participants=" + encodeURIComponent(JSON.stringify(gcMakerUserList)) + "&name=" + encodeURIComponent(gcMakerNameInput.value));       
 			xhttp.send(); 
 		}

@@ -111,7 +111,9 @@
 				let dateTime = new Date(data["dateTimeSent"]);										//turn datetime into date object
 
 				displayUsername.innerHTML = "<b>" + data["senderId"] + "</b>";						//insert data
-				displayDateTime.innerHTML = dateTime.getDate().toString().padStart(2, "0") + "/" + (dateTime.getMonth() + 1).toString().padStart(2, "0") + "/" + dateTime.getFullYear().toString() + " " + dateTime.getHours().toString().padStart(2, "0") + ":" + dateTime.getMinutes().toString().padStart(2, "0");
+				let dateString = dateTime.getDate().toString().padStart(2, "0") + "/" + (dateTime.getMonth() + 1).toString().padStart(2, "0") + "/" + dateTime.getFullYear().toString();
+				let timeString = dateTime.getHours().toString().padStart(2, "0") + ":" + dateTime.getMinutes().toString().padStart(2, "0");
+				displayDateTime.innerHTML = dateString + " " + timeString;
 				displayText.innerHTML = data["textContent"];
 
 				resolve(newMessageLi);
@@ -163,23 +165,9 @@
 					Object.keys(data).forEach((key) => {			//go through all the chats
 						let value = data[key];
 						value["dateTimeSent"] = parseInt(value["dateTimeSent"]);
-						// if(data[key - 1] != undefined) {
-						// 	let lastMessage = data[key - 1];
-						// 	if((lastMessage["senderId"] == value["senderId"]) && ((lastMessage["dateTimeSent"] - value["dateTimeSent"]) < 600000)) {
-						// 		console.log("Passes time check");
-						// 		newMessage = document.createElement("Li");
-						// 		newMessage.innerHTML = value["textContent"];
-						// 		messages.push(newMessage);
-						// 	} else {
-						// 		formatMessage(value).then((newMessage) => {
-						// 			messages.push(newMessage);
-						// 		})
-						// 	}
-						// } else {
 							formatMessage(value).then((newMessage) => {
 								messages.push(newMessage);
 						 	})
-						// }
 						
 					}); 
 					console.log("Data");

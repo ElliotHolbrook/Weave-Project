@@ -2,11 +2,11 @@
 	require_once "../libraries/accounts.php";
 	require_once "../libraries/messages.php";
 	
-	$participants = json_decode(rawurldecode($_GET["participants"]));
+	$participants = json_decode(rawurldecode($_GET["participants"]));		//get values
 	$name = rawurldecode($_GET["name"]);
 
 	$participantIds = [];
-	foreach($participants as $participant) {
+	foreach($participants as $participant) {								//get IDs from participants
 		$parts = explode("#", $participant);
 		if(count($parts) == 1) { return; };
 		$username = $parts[0];
@@ -17,4 +17,4 @@
 		}
 	}
 
-	ChatInteractions::createGroupChat($participantIds, $name);
+	ChatInteractions::createGroupChat($participantIds, $name);		//create group chat
