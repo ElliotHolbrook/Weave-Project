@@ -90,7 +90,7 @@ function generateId() {
 function generateChatId() {
     function generateAndCheckIdValid() {
         return generateId().then((generatedId) => {
-            console.log("ID generated - " + generatedId);
+            //console.log("ID generated - " + generatedId);
             return checkChatIdExists(generatedId).catch((message) => {
                 console.log(message);
                 return generateAndCheckIdValid();            //stay recursing if id does exist
@@ -115,7 +115,7 @@ io.on("connection", (sock)=>{
             if(err !== null) { console.log(err) };
             console.log(result[0]["username"] + "#" + result[0]["tag"] + " connected to the server!");  
         });
-        console.log(clients);
+        //console.log(clients);
     });
 
     sock.on("disconnect", ()=>{
@@ -127,16 +127,16 @@ io.on("connection", (sock)=>{
                 clients = newClients;
             }
         })
-        console.log(clients);
+        //console.log(clients);
     }); 
 
     sock.on("sendMessage", (data)=>{
         let user = getUserBySocketId(sock.id);                                                                                          //identify sender
-        console.log("Message Recieved || User: " + user + " Data: '" + data["messageText"] + "' Channel: " + data["channelId"]);        //log message recieved from sender in console
+        //console.log("Message Recieved || User: " + user + " Data: '" + data["messageText"] + "' Channel: " + data["channelId"]);        //log message recieved from sender in console
         
         getUsernameById(user).then((username) => {
         participants = [];
-        console.log("----------------------------------------");
+        //console.log("----------------------------------------");
         con.query("SELECT participants FROM channel_data WHERE id = ?", [data["channelId"]], (err, result)=> {                  //get people to send the chats to
             if(err !== null) { console.log(err); return };    
             let dateTime = new Date().getTime()
@@ -148,16 +148,16 @@ io.on("connection", (sock)=>{
             
             participantsList.forEach((value)=>{                                             
                 participantSocket = getSocketByUserId(value);                               //get socket of participant
-                console.log("Attempting send to " + value);
+                //console.log("Attempting send to " + value);
                 if(participantSocket !== false) {                                           //if socket exists then send message and log it in the console
-                    console.log("--- DUMP --- \n|user: " + typeof user + " '" + user +                  //log all information to console
-                                "' \n|data['channelId']: " + typeof data["channelId"] + " '" + data["channelId"] + 
-                                "' \n|data['messageText']: " + typeof data['messageText'] + " '" + data['messageText'] + 
-                                "' \n|Participants: " + participants + "\n|Participant Socket: " + participantSocket);
+                    // console.log("--- DUMP --- \n|user: " + typeof user + " '" + user +                  //log all information to console
+                    //             "' \n|data['channelId']: " + typeof data["channelId"] + " '" + data["channelId"] + 
+                    //             "' \n|data['messageText']: " + typeof data['messageText'] + " '" + data['messageText'] + 
+                    //             "' \n|Participants: " + participants + "\n|Participant Socket: " + participantSocket);
                     participantSocket.emit("recieveMessage", {"senderId": user, "senderUsername": username, "channelId": data["channelId"], "textContent": data["messageText"], "dateTimeSent": dateTime})
-                } else {
-                    console.log("Failed to send: no connection detected");                //else fail to send message
-                }
+                 } // else {
+                //     console.log("Failed to send: no connection detected");                //else fail to send message
+                // }
             })
         });
         });
