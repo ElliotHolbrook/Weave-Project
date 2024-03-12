@@ -1,14 +1,20 @@
-const http = require("http");               //native module
+const https = require("https");               //native module
 const socketio = require("socket.io");      //imported module
+const fs = require('node:fs');
 //const con = require("./dbConnect");         //js file in same dir
 
-server = http.createServer((req, res)=>{
+const options = {
+    key: fs.readFileSync('privkey.pem'),
+    cert: fs.readFileSync('fullchain.pem'),
+  };
+
+server = https.createServer(options, (req, res)=>{
 	res.end("Connected Successfully");          //http server to handle initial http requests
 });
 
 const io = socketio(server, {
     cors: {                                 //socket io server to handle ws connections
-      origin: 'http://localhost'}  
+      origin: 'https://weaveproject.site'}  
     });
 
 var mysql = require('mysql2');
@@ -110,7 +116,8 @@ io.on("connection", (sock)=>{
     console.log("New connection: " + sock.id);      //log connection in console
     
     sock.on("id", (data)=>{
-        clients.push({"socketId": sock.id, "userId": data});                                   //add client to clien list
+        clients.push({"socketId": sock.id, "userId": data});   
+        console.log(clients.length.toString() + " clients connected");                                //add client to clien list
         con.query("SELECT username, tag FROM account_data WHERE id = '" + data + "'", (err, result)=> {
             if(err !== null) { console.log(err) };
             console.log(result[0]["username"] + "#" + result[0]["tag"] + " connected to the server!");  

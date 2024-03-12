@@ -17,7 +17,7 @@
 </header>
 <body>
 <h1>Friend Manager</h1>
-<p>You many have to refresh the page to see changes</p>
+<p>You may have to refresh the page to see changes</p>
 <a href="../home">Back to home</a><br><br> <!-- Button to get back to the home page-->
 <!-- Input form for users making a new friend request activates checkForFriend() javascript function after each time the user inputs a character
 Provides immediate response to typing. Then when user submits data it is sent to sendFriendRequest() function-->
@@ -84,7 +84,7 @@ Provides immediate response to typing. Then when user submits data it is sent to
                 if($friendAccount != False) {
                     $username = $friendAccount->getUsername();
                     $tag = $friendAccount->getTag();
-                    echo "<li><div id=\"friend:$friendId\">$username#$tag  <button onclick=\"removeFriend(this.parentNode);\">Remove Friend</button>   <button>Block</button></div></li>";
+                    echo "<li><div id=\"friend:$friendId\">$username#$tag  <button onclick=\"removeFriend(this.parentNode);\">Remove Friend</button><!--   <button>Block</button>--></div></li>";
                 } else {
                     AccountInteractions::removeFriendById($friendId, $_SESSION["account"]->getId());
                 }

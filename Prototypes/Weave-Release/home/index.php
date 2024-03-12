@@ -111,7 +111,7 @@
 		</ul>
 		</div>
 		<label for="messageBox">Message:</label>
-		<input id="messageBox" type="text" autocomplete="off"></input>
+		<input id="messageBox" type="text" autocomplete="off" spellcheck="true"></input>
 		<input id="sendButton" type="button" onclick="sendMessage()" value="Send"></input>
 	</div>
 
@@ -155,7 +155,7 @@
 		
 		
 		console.log(io);
-		const socket = io("http://localhost:8000");
+		const socket = io("https://weaveproject.site:8000");
 		console.log(socket);
 		
 
