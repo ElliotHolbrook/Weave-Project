@@ -19,7 +19,7 @@ const io = socketio(server, {
 
 var mysql = require('mysql2');
 
-try {
+
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -31,9 +31,7 @@ var con = mysql.createConnection({
     if (err) throw err;
     console.log("Connected to MySQL Database");
     });
-} catch(e) {
-    exit(e);
-}
+
 
 var clients = [];                           //list holds currently connected sockets and the user's ID
 
