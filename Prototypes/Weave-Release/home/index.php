@@ -364,7 +364,7 @@
 		function addUserToGCMakerUserList() {
 			if(gcMakerUserInput.value != "") {					//cheack if input empty
 				let val = gcMakerUserInput.value;				//get inputted value
-				if(!acceptableFriendsList.includes(val)) {						//if value not acceptable then display placeholder
+				if(!acceptableFriendsList.includes(val) || gcMakerUserList.includes(val)) {						//if value not acceptable then display placeholder
 					gcMakerUserInput.value = "";
 					gcMakerUserInput.placeholder = "Input a Friend's Name"
 					return; 

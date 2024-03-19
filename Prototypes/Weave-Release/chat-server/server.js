@@ -19,6 +19,7 @@ const io = socketio(server, {
 
 var mysql = require('mysql2');
 
+try {
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -30,6 +31,9 @@ var con = mysql.createConnection({
     if (err) throw err;
     console.log("Connected to MySQL Database");
     });
+} catch(e) {
+    exit(e);
+}
 
 var clients = [];                           //list holds currently connected sockets and the user's ID
 
@@ -161,7 +165,11 @@ io.on("connection", (sock)=>{
                     //             "' \n|data['channelId']: " + typeof data["channelId"] + " '" + data["channelId"] + 
                     //             "' \n|data['messageText']: " + typeof data['messageText'] + " '" + data['messageText'] + 
                     //             "' \n|Participants: " + participants + "\n|Participant Socket: " + participantSocket);
-                    participantSocket.emit("recieveMessage", {"senderId": user, "senderUsername": username, "channelId": data["channelId"], "textContent": data["messageText"], "dateTimeSent": dateTime})
+                    try{
+                        participantSocket.emit("recieveMessage", {"senderId": user, "senderUsername": username, "channelId": data["channelId"], "textContent": data["messageText"], "dateTimeSent": dateTime})
+                    } catch (e) {
+                        console.log(e);
+                    }
                  } // else {
                 //     console.log("Failed to send: no connection detected");                //else fail to send message
                 // }
