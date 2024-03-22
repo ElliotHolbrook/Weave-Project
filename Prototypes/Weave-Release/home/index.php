@@ -231,6 +231,7 @@
 			console.log({"messageText": message, "channelId": channelId.toString()});
 			socket.emit("sendMessage", {"messageText": message, "channelId": channelId.toString()});
 			messageBox.value = "";
+			console.log("sendMessage event")
 		}
 
 		function getMessagesFromDB(channelId, startIndex, endIndex) {

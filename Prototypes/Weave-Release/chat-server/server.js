@@ -8,14 +8,19 @@ const options = {
     cert: fs.readFileSync('fullchain.pem'),
   };
 
+
+
 server = https.createServer(options, (req, res)=>{
 	res.end("Connected Successfully");          //http server to handle initial http requests
 });
+
+
 
 const io = socketio(server, {
     cors: {                                 //socket io server to handle ws connections
       origin: 'https://weaveproject.site'}  
     });
+
 
 var mysql = require('mysql2');
 
@@ -36,29 +41,50 @@ var con = mysql.createConnection({
 var clients = [];                           //list holds currently connected sockets and the user's ID
 
 function getUserBySocketId(socketId) {              //can take the ID of a socket and return the ID of the connected user
-    let user = false;
-    clients.forEach((value)=>{
-        if(value["socketId"] == socketId) {
-            user = value["userId"];
-            return;                         //cancel for each loops
-        }
-    })
-    return user;
+    // let user = false;
+    // clients.forEach((value)=>{
+    //     if(value["socketId"] == socketId) {
+    //         user = value["userId"];
+    //         console.log("socket found");                         //cancel for each loops
+    //     }
+    // })
+    
+    // return user;
+    
+    return Promise.all(clients.map((client) => {
+        return new Promise((resolve, reject) => {
+            if(client["socketId"] == socketId) {
+                resolve(client["userId"]);
+            } else {
+                resolve(-1)
+            }
+        })
+    }))
 }
 
 function getSocketByUserId(userId) {
-    let socketId = false;
-    clients.forEach((client)=>{
-        if(client["userId"] == userId) {
-            socketId = client["socketId"];
-            return;                             //cancel for each loop
-        }
-    })
-    if(socketId !== false) {
-        return io.sockets.sockets.get(socketId);        //get socket from currently open sockets
-    } else {
-        return false;
-    }
+    // let socketId = false;
+    // clients.forEach((client)=>{
+    //     if(client["userId"] == userId) {
+    //         socketId = client["socketId"];
+    //         return;                             //cancel for each loop
+    //     }
+    // })
+    // if(socketId !== false) {
+    //     return io.sockets.sockets.get(socketId);        //get socket from currently open sockets
+    // } else {
+    //     return false;
+    // }
+
+    return Promise.all(clients.map((client) => {
+        return new Promise((resolve, reject) => {
+            if(client["userId"] == userId) {
+                resolve(io.sockets.sockets.get(client["socketId"]));
+            } else {
+                resolve(-1)
+            }
+        })
+    }))
 }
 
 function getUsernameById(id) {
@@ -66,7 +92,7 @@ function getUsernameById(id) {
         con.query("SELECT username FROM account_data WHERE id = ?", [id], (err, result)=>{
             if(err !== null) { console.log(err) };
             if(result.length == 0) {
-                reject("Invalid ID");  //user doesn't exist
+                reject(id);  //user doesn't exist
             } else {
                 resolve(result[0]["username"]);  //return username
             }
@@ -127,8 +153,8 @@ io.on("connection", (sock)=>{
         //console.log(clients);
     });
 
-    sock.on("disconnect", ()=>{
-        console.log(sock.id + " disconnected");
+    sock.on("disconnect", (reason, details)=>{
+        console.log(sock.id + " disconnected\nReason: " + reason + "\nDetails: " + details);
         newClients = [];
         clients.forEach((value)=>{
             if(value["socketId"] !== sock.id) {
@@ -137,15 +163,17 @@ io.on("connection", (sock)=>{
             }
         })
         //console.log(clients);
+        
     }); 
 
     sock.on("sendMessage", (data)=>{
-        let user = getUserBySocketId(sock.id);                                                                                          //identify sender
+        getUserBySocketId(sock.id).then((users => {                                                                                        //identify sender
         //console.log("Message Recieved || User: " + user + " Data: '" + data["messageText"] + "' Channel: " + data["channelId"]);        //log message recieved from sender in console
-        
+
+        users = users.filter(user => user !== -1);
+        user = users[0]
         getUsernameById(user).then((username) => {
         participants = [];
-        //console.log("----------------------------------------");
         con.query("SELECT participants FROM channel_data WHERE id = ?", [data["channelId"]], (err, result)=> {                  //get people to send the chats to
             if(err !== null) { console.log(err); return };    
             let dateTime = new Date().getTime()
@@ -156,25 +184,36 @@ io.on("connection", (sock)=>{
             participantsList = JSON.parse(participants);                                    //decode participant information into usable list
             
             participantsList.forEach((value)=>{                                             
-                participantSocket = getSocketByUserId(value);                               //get socket of participant
-                //console.log("Attempting send to " + value);
-                if(participantSocket !== false) {                                           //if socket exists then send message and log it in the console
-                    // console.log("--- DUMP --- \n|user: " + typeof user + " '" + user +                  //log all information to console
-                    //             "' \n|data['channelId']: " + typeof data["channelId"] + " '" + data["channelId"] + 
-                    //             "' \n|data['messageText']: " + typeof data['messageText'] + " '" + data['messageText'] + 
-                    //             "' \n|Participants: " + participants + "\n|Participant Socket: " + participantSocket);
-                    try{
-                        participantSocket.emit("recieveMessage", {"senderId": user, "senderUsername": username, "channelId": data["channelId"], "textContent": data["messageText"], "dateTimeSent": dateTime})
-                    } catch (e) {
-                        console.log(e);
-                    }
-                 } // else {
-                //     console.log("Failed to send: no connection detected");                //else fail to send message
-                // }
+                participantSocket = getSocketByUserId(value).then((sockets) => {
+                    sockets = sockets.filter(socket => socket !== (undefined || -1))
+                    sockets.forEach((participantSocket) => {
+                            //console.log("Attempting send to " + value);
+                        if(participantSocket !== false) {                                           //if socket exists then send message and log it in the console
+                        // console.log("--- DUMP --- \n|user: " + typeof user + " '" + user +                  //log all information to console
+                        //             "' \n|data['channelId']: " + typeof data["channelId"] + " '" + data["channelId"] + 
+                        //             "' \n|data['messageText']: " + typeof data['messageText'] + " '" + data['messageText'] + 
+                        //             "' \n|Participants: " + participants + "\n|Participant Socket: " + participantSocket);
+                            try{
+                                participantSocket.emit("recieveMessage", {"senderId": user, "senderUsername": username, "channelId": data["channelId"], "textContent": data["messageText"], "dateTimeSent": dateTime})
+                            } catch (e) {
+                                console.log(e);
+                            }
+                        } // else {
+                        //     console.log("Failed to send: no connection detected");                //else fail to send message
+                        // }
+                    })
+                });                               //get socket of participant
+                
             })
         });
+        }).catch((err) => {
+            if(err !== undefined) {
+                console.log(err.toString() + " is not validing");
+            }
         });
+        })); 
     });
 });
 
 server.listen(8000);            //listen for http requests on port 8000
+
