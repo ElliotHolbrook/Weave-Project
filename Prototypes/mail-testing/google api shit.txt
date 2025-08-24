@@ -1,2 +1,2 @@
-Client ID: 540077142542-0jn73c36m4hbalk0biv457gpcndir878.apps.googleusercontent.com
-Client Secret: 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
+Client ID: nonono
+Client Secret: you don't
